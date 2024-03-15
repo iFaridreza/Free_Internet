@@ -75,7 +75,7 @@ internal sealed class ConfigManager
         try
         {
             var fileDir = Directory.GetFiles(pathFolder);
-            fileDir = fileDir.Select(x => x.Replace($"{pathFolder}\\", "")).ToArray();
+            fileDir = fileDir.Select(x => x.Replace($"{pathFolder}/", "")).ToArray();
             if (!fileDir.Contains(fileName))
             {
                 return string.Empty;
