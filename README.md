@@ -7,7 +7,7 @@ Free internet for all or no one |  اینترنت آزاد برای همه یا 
 ### این پروژه تمام لینک های ریپازیتوری زیر رو هر 2 ساعت دریافت میکنه و در کانال تلگرامی زیر ارسال میکنه
 
 <p align="center" dir="auto">
-<a href="https://github.com/barry-far/V2ray-Configs"><img src="https://camo.githubusercontent.com/5f75dd23e45d63da28f16a92ec58916a8be9cf11fdf11e26493e402f3a04507c/68747470733a2f2f736b696c6c69636f6e732e6465762f69636f6e733f693d646f746e65742c63732c6769742c6769746875622c70792c706f73746d616e2c73716c6974652c7673636f64652c76697375616c73747564696f2c707974686f6e" data-canonical-src="https://skillicons.dev/icons?i=github" style="max-width: 100%;"></a>
+<a href="https://github.com/barry-far/V2ray-Configs"><img src="https://skillicons.dev/icons?i=github" data-canonical-src="https://skillicons.dev/icons?i=github" style="max-width: 100%;"></a>
 
 ##### 
 
