@@ -1,4 +1,6 @@
-﻿namespace Free_Internet.Services;
+﻿using Free_Internet.Models;
+
+namespace Free_Internet.Services;
 internal sealed class ConfigManager
 {
     private string _urlRepository;
@@ -23,12 +25,12 @@ internal sealed class ConfigManager
         try
         {
             string pathZip = $"{Path.Combine(_repositoryPath, _repositoryName)}.zip";
-            if(File.Exists(pathZip))
+            if (File.Exists(pathZip))
             {
                 File.Delete(pathZip);
             }
             using HttpClient httpClient = new();
-            using HttpResponseMessage response = await httpClient.GetAsync(_urlRepository);
+            using HttpResponseMessage response = await httpClient.GetAsync(_urlRepository, HttpCompletionOption.ResponseContentRead);
             if (response.IsSuccessStatusCode)
             {
                 using Stream contentStream = await response.Content.ReadAsStreamAsync();
@@ -54,7 +56,7 @@ internal sealed class ConfigManager
             {
                 foreach (var item in repositoryPath)
                 {
-                    Directory.Delete(item,true);
+                    Directory.Delete(item, true);
                 }
             }
             System.IO.Compression.ZipFile.ExtractToDirectory(pathZip, _repositoryPath);
@@ -67,5 +69,37 @@ internal sealed class ConfigManager
             throw;
         }
     }
- 
+
+    internal string GetDataFile(string pathFolder, string fileName)
+    {
+        try
+        {
+            var fileDir = Directory.GetFiles(pathFolder);
+            fileDir = fileDir.Select(x => x.Replace($"{pathFolder}\\", "")).ToArray();
+            if (!fileDir.Contains(fileName))
+            {
+                return string.Empty;
+            }
+            string pathFile = Path.Combine(pathFolder, fileName);
+            string dataFile = File.ReadAllText(pathFile);
+            return dataFile;
+        }
+        catch
+        {
+            throw;
+        }
+
+    }
+
+    internal IEnumerable<T> GetLinkConfig<T>(string dataFile, T tConfig) where T : BaseConfig<T>, new()
+    {
+        try
+        {
+            return tConfig.GetConfigRegex(dataFile);
+        }
+        catch
+        {
+            throw;
+        }
+    }
 }
