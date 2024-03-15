@@ -22,7 +22,7 @@
     string fileName = "All_Configs_Sub.txt";
     string text = "Internet is free for everyone 🌍";
     string url = "https://t.me/iFaridreza";
-    int twoHour = 8400000;
+    int delayOfMilisecound = 60000;
 
     ConfigManager configManager = new(repositoryUrl, repositoryName);
 
@@ -33,15 +33,6 @@
 
     telegramBot.ScheduleTaskEvent += UpdateConfig;
     telegramBot.InvokeEvent();
-
-    System.Timers.Timer timerSchedule = new System.Timers.Timer(twoHour);
-    timerSchedule.Elapsed += TimerSchedule_Elapsed;
-    timerSchedule.Start();
-
-    void TimerSchedule_Elapsed(object? sender, ElapsedEventArgs e)
-    {
-        telegramBot.InvokeEvent();
-    }
 
     async Task UpdateConfig()
     {
@@ -59,29 +50,13 @@
             IEnumerable<ShadowSocks> shadowLink = configManager.GetLinkConfig(dataFile, new ShadowSocks());
 
             StringBuilder message = new();
-            foreach (var vle in vlessesLink)
-            {
-                message.Append("❤️ New Config");
-                message.Append(Environment.NewLine);
-                message.Append(Environment.NewLine);
-                message.Append($"✨ Type <b>[ {nameof(Vless)} ]</b>");
-                message.Append(Environment.NewLine);
-                message.Append(Environment.NewLine);
-                message.Append($"<code>{vle.Link}</code>");
-                message.Append(Environment.NewLine);
-                message.Append(Environment.NewLine);
-                message.Append($"#Free_Internet ");
-                await telegramBot.SendMessage(usernameChanell, message.ToString());
-                message.Clear();
-                await Task.Delay(5000);
-            }
 
-            foreach (var vle in vmessLink)
+            foreach (var vle in ssLink)
             {
                 message.Append("❤️ New Config");
                 message.Append(Environment.NewLine);
                 message.Append(Environment.NewLine);
-                message.Append($"✨ Type <b>[ {nameof(Vmess)} ]</b>");
+                message.Append($"✨ Type <b>[ {nameof(Ss)} ]</b>");
                 message.Append(Environment.NewLine);
                 message.Append(Environment.NewLine);
                 message.Append($"<code>{vle.Link}</code>");
@@ -90,41 +65,7 @@
                 message.Append($"#Free_Internet ");
                 await telegramBot.SendMessage(usernameChanell, message.ToString());
                 message.Clear();
-                await Task.Delay(5000);
-            }
-
-            foreach (var vle in warpLink)
-            {
-                message.Append("❤️ New Config");
-                message.Append(Environment.NewLine);
-                message.Append(Environment.NewLine);
-                message.Append($"✨ Type <b>[ {nameof(Warp)} ]</b>");
-                message.Append(Environment.NewLine);
-                message.Append(Environment.NewLine);
-                message.Append($"<code>{vle.Link}</code>");
-                message.Append(Environment.NewLine);
-                message.Append(Environment.NewLine);
-                message.Append($"#Free_Internet ");
-                await telegramBot.SendMessage(usernameChanell, message.ToString());
-                message.Clear();
-                await Task.Delay(5000);
-            }
-
-            foreach (var vle in tuicLink)
-            {
-                message.Append("❤️ New Config");
-                message.Append(Environment.NewLine);
-                message.Append(Environment.NewLine);
-                message.Append($"✨ Type <b>[ {nameof(Tuic)} ]</b>");
-                message.Append(Environment.NewLine);
-                message.Append(Environment.NewLine);
-                message.Append($"<code>{vle.Link}</code>");
-                message.Append(Environment.NewLine);
-                message.Append(Environment.NewLine);
-                message.Append($"#Free_Internet ");
-                await telegramBot.SendMessage(usernameChanell, message.ToString());
-                message.Clear();
-                await Task.Delay(5000);
+                await Task.Delay(delayOfMilisecound);
             }
 
             foreach (var vle in trojanLink)
@@ -141,15 +82,15 @@
                 message.Append($"#Free_Internet ");
                 await telegramBot.SendMessage(usernameChanell, message.ToString());
                 message.Clear();
-                await Task.Delay(5000);
+                await Task.Delay(delayOfMilisecound);
             }
 
-            foreach (var vle in ssLink)
+            foreach (var vle in vmessLink)
             {
                 message.Append("❤️ New Config");
                 message.Append(Environment.NewLine);
                 message.Append(Environment.NewLine);
-                message.Append($"✨ Type <b>[ {nameof(Ss)} ]</b>");
+                message.Append($"✨ Type <b>[ {nameof(Vmess)} ]</b>");
                 message.Append(Environment.NewLine);
                 message.Append(Environment.NewLine);
                 message.Append($"<code>{vle.Link}</code>");
@@ -158,7 +99,58 @@
                 message.Append($"#Free_Internet ");
                 await telegramBot.SendMessage(usernameChanell, message.ToString());
                 message.Clear();
-                await Task.Delay(5000);
+                await Task.Delay(delayOfMilisecound);
+            }
+
+            foreach (var vle in vlessesLink)
+            {
+                message.Append("❤️ New Config");
+                message.Append(Environment.NewLine);
+                message.Append(Environment.NewLine);
+                message.Append($"✨ Type <b>[ {nameof(Vless)} ]</b>");
+                message.Append(Environment.NewLine);
+                message.Append(Environment.NewLine);
+                message.Append($"<code>{vle.Link}</code>");
+                message.Append(Environment.NewLine);
+                message.Append(Environment.NewLine);
+                message.Append($"#Free_Internet ");
+                await telegramBot.SendMessage(usernameChanell, message.ToString());
+                message.Clear();
+                await Task.Delay(delayOfMilisecound);
+            }
+
+            foreach (var vle in warpLink)
+            {
+                message.Append("❤️ New Config");
+                message.Append(Environment.NewLine);
+                message.Append(Environment.NewLine);
+                message.Append($"✨ Type <b>[ {nameof(Warp)} ]</b>");
+                message.Append(Environment.NewLine);
+                message.Append(Environment.NewLine);
+                message.Append($"<code>{vle.Link}</code>");
+                message.Append(Environment.NewLine);
+                message.Append(Environment.NewLine);
+                message.Append($"#Free_Internet ");
+                await telegramBot.SendMessage(usernameChanell, message.ToString());
+                message.Clear();
+                await Task.Delay(delayOfMilisecound);
+            }
+
+            foreach (var vle in tuicLink)
+            {
+                message.Append("❤️ New Config");
+                message.Append(Environment.NewLine);
+                message.Append(Environment.NewLine);
+                message.Append($"✨ Type <b>[ {nameof(Tuic)} ]</b>");
+                message.Append(Environment.NewLine);
+                message.Append(Environment.NewLine);
+                message.Append($"<code>{vle.Link}</code>");
+                message.Append(Environment.NewLine);
+                message.Append(Environment.NewLine);
+                message.Append($"#Free_Internet ");
+                await telegramBot.SendMessage(usernameChanell, message.ToString());
+                message.Clear();
+                await Task.Delay(delayOfMilisecound);
             }
 
             foreach (var vle in shadowLink)
@@ -175,8 +167,10 @@
                 message.Append($"#Free_Internet ");
                 await telegramBot.SendMessage(usernameChanell, message.ToString());
                 message.Clear();
-                await Task.Delay(5000);
+                await Task.Delay(delayOfMilisecound);
             }
+
+            telegramBot.InvokeEvent();
         }
     }
 }

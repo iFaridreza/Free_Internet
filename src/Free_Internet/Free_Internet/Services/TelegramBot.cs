@@ -39,7 +39,7 @@ internal class TelegramBot
         {
             await _botClient.SendTextMessageAsync(usernameChanell, message, parseMode: ParseMode.Html, replyMarkup: DisplayButton(_text, _url));
         }
-        catch (Exception ex)
+        catch
         {
             throw;
         }
