@@ -1,4 +1,4 @@
-﻿using Free_Internet.Models;
+﻿using File = System.IO.File;
 
 namespace Free_Internet.Services;
 internal sealed class ConfigManager
@@ -95,7 +95,7 @@ internal sealed class ConfigManager
     {
         try
         {
-            return tConfig.GetConfigRegex(dataFile);
+            return tConfig.GetConfigRegex(dataFile).Reverse();
         }
         catch
         {
