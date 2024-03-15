@@ -17,4 +17,4 @@ Free internet for all or no one |  اینترنت آزاد برای همه یا 
 
 ## به یاد یوسف قبادی و سگارو❤️
 
-<a href="https://www.coffeebede.com/ifaridreza"><img class="img-fluid" src="https://coffeebede.ir/DashboardTemplateV2/app-assets/images/banner/default-yellow.svg" /></a>
+<a href="https://www.coffeebede.com/ifaridreza"><img  class="img-fluid" style="max-width: 100%;" src="https://coffeebede.ir/DashboardTemplateV2/app-assets/images/banner/default-yellow.svg" /></a>
