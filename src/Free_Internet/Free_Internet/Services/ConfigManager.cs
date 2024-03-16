@@ -75,7 +75,7 @@ internal sealed class ConfigManager
         try
         {
             var fileDir = Directory.GetFiles(pathFolder);
-            fileDir = fileDir.Select(x => x.Replace($"{pathFolder}/", "")).ToArray();
+            fileDir = fileDir.Select(x => x.Replace($"{pathFolder}/", "")).Select(x=> x.Replace($"{pathFolder}\\", "")).ToArray();
             if (!fileDir.Contains(fileName))
             {
                 return string.Empty;
@@ -91,11 +91,11 @@ internal sealed class ConfigManager
 
     }
 
-    internal IEnumerable<T> GetLinkConfig<T>(string dataFile, T tConfig) where T : BaseConfig<T>, new()
+    internal IEnumerable<T> GetLinkConfig<T>(string dataFile, T tConfig) where T : BaseConfig, new()
     {
         try
-        {
-            return tConfig.GetConfigRegex(dataFile).Reverse();
+        {   
+            return tConfig.GetConfigRege<T>(dataFile).Reverse();
         }
         catch
         {

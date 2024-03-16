@@ -1,8 +1,8 @@
 ﻿namespace Free_Internet.Models;
 
-internal class Vless : BaseConfig<Vless>
+internal class Vless : BaseConfig
 {
-    internal override sealed IEnumerable<Vless> GetConfigRegex(string data)
+    internal override IEnumerable<T> GetConfigRege<T>(string data)
     {
         try
         {
@@ -16,7 +16,8 @@ internal class Vless : BaseConfig<Vless>
                 {
                     links.Add(new Vless
                     {
-                        Link = matchs.Value
+                        Link = matchs.Value,
+                        ConfigType = ConfigType.Vless
                     });
                 }
             }
@@ -24,7 +25,7 @@ internal class Vless : BaseConfig<Vless>
             {
                 links = links.Distinct().ToList();
             }
-            return links;
+            return (IEnumerable<T>)links;
         }
         catch
         {

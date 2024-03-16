@@ -1,8 +1,8 @@
 ﻿namespace Free_Internet.Models;
 
-internal class Trojan : BaseConfig<Trojan>
+internal class Trojan : BaseConfig
 {
-    internal override sealed IEnumerable<Trojan> GetConfigRegex(string data)
+    internal override IEnumerable<T> GetConfigRege<T>(string data)
     {
         try
         {
@@ -16,7 +16,8 @@ internal class Trojan : BaseConfig<Trojan>
                 {
                     links.Add(new Trojan
                     {
-                        Link = matchs.Value
+                        Link = matchs.Value,
+                        ConfigType = ConfigType.Trojan
                     });
                 }
             }
@@ -24,7 +25,7 @@ internal class Trojan : BaseConfig<Trojan>
             {
                 links = links.Distinct().ToList();
             }
-            return links;
+            return (IEnumerable<T>)links;
         }
         catch
         {

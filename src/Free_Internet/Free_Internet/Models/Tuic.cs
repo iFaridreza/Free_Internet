@@ -1,8 +1,8 @@
 ﻿namespace Free_Internet.Models;
 
-internal class Tuic : BaseConfig<Tuic>
+internal class Tuic : BaseConfig
 {
-    internal override sealed IEnumerable<Tuic> GetConfigRegex(string data)
+    internal override IEnumerable<T> GetConfigRege<T>(string data)
     {
         try
         {
@@ -16,7 +16,8 @@ internal class Tuic : BaseConfig<Tuic>
                 {
                     links.Add(new Tuic
                     {
-                        Link = matchs.Value
+                        Link = matchs.Value,
+                        ConfigType = ConfigType.Tuic
                     });
                 }
             }
@@ -24,7 +25,7 @@ internal class Tuic : BaseConfig<Tuic>
             {
                 links = links.Distinct().ToList();
             }
-            return links;
+            return (IEnumerable<T>)links;
         }
         catch
         {

@@ -1,8 +1,8 @@
 ﻿namespace Free_Internet.Models;
 
-internal class ShadowSocks : BaseConfig<ShadowSocks>
+internal class ShadowSocks : BaseConfig
 {
-    internal override sealed IEnumerable<ShadowSocks> GetConfigRegex(string data)
+    internal override IEnumerable<T> GetConfigRege<T>(string data)
     {
         try
         {
@@ -16,7 +16,8 @@ internal class ShadowSocks : BaseConfig<ShadowSocks>
                 {
                     links.Add(new ShadowSocks
                     {
-                        Link = matchs.Value
+                        Link = matchs.Value,
+                        ConfigType = ConfigType.ShadowSocks
                     });
                 }
             }
@@ -24,7 +25,7 @@ internal class ShadowSocks : BaseConfig<ShadowSocks>
             {
                 links = links.Distinct().ToList();
             }
-            return links;
+            return (IEnumerable<T>)links;
         }
         catch
         {

@@ -1,8 +1,8 @@
 ﻿namespace Free_Internet.Models;
 
-internal class Warp : BaseConfig<Warp>
+internal class Warp : BaseConfig
 {
-    internal override sealed IEnumerable<Warp> GetConfigRegex(string data)
+    internal override IEnumerable<T> GetConfigRege<T>(string data)
     {
         try
         {
@@ -16,7 +16,8 @@ internal class Warp : BaseConfig<Warp>
                 {
                     links.Add(new Warp
                     {
-                        Link = matchs.Value
+                        Link = matchs.Value,
+                        ConfigType = ConfigType.Warp
                     });
                 }
             }
@@ -24,7 +25,7 @@ internal class Warp : BaseConfig<Warp>
             {
                 links = links.Distinct().ToList();
             }
-            return links;
+            return (IEnumerable<T>)links;
         }
         catch
         {

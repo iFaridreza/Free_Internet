@@ -1,8 +1,8 @@
 ﻿namespace Free_Internet.Models;
 
-internal class Ss : BaseConfig<Ss>
+internal class Ss : BaseConfig
 {
-    internal override sealed IEnumerable<Ss> GetConfigRegex(string data)
+    internal override IEnumerable<T> GetConfigRege<T>(string data)
     {
         try
         {
@@ -16,7 +16,8 @@ internal class Ss : BaseConfig<Ss>
                 {
                     links.Add(new Ss
                     {
-                        Link = matchs.Value
+                        Link = matchs.Value,
+                        ConfigType = ConfigType.Ss
                     });
                 }
             }
@@ -24,7 +25,7 @@ internal class Ss : BaseConfig<Ss>
             {
                 links = links.Distinct().ToList();
             }
-            return links;
+            return (IEnumerable<T>)links;
         }
         catch
         {

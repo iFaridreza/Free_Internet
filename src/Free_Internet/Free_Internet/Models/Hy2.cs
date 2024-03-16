@@ -1,10 +1,11 @@
 ﻿
 namespace Free_Internet.Models;
 
-internal class Hy2 : BaseConfig<Hy2>
+internal class Hy2 : BaseConfig
 {
-    internal override sealed IEnumerable<Hy2> GetConfigRegex(string data)
+    internal override IEnumerable<T> GetConfigRege<T>(string data)
     {
+
         try
         {
             string[] dataArray = data.Split('\n');
@@ -17,7 +18,8 @@ internal class Hy2 : BaseConfig<Hy2>
                 {
                     links.Add(new Hy2
                     {
-                        Link = matchs.Value
+                        Link = matchs.Value,
+                        ConfigType = ConfigType.Hy2
                     });
                 }
             }
@@ -25,7 +27,7 @@ internal class Hy2 : BaseConfig<Hy2>
             {
                 links = links.Distinct().ToList();
             }
-            return links;
+            return (IEnumerable<T>)links;
         }
         catch
         {

@@ -1,6 +1,18 @@
 ﻿namespace Free_Internet.Models;
-internal abstract class BaseConfig<T> where T : class, new() 
+internal abstract class BaseConfig
 {
     internal string Link { get; set; } = null!;
-    internal abstract IEnumerable<T> GetConfigRegex(string data) ;
+    internal ConfigType ConfigType { get; set; }
+    internal abstract IEnumerable<T> GetConfigRege<T>(string data) where T : class, new();
+}
+internal enum ConfigType
+{
+    Trojan,
+    Vless,
+    Vmess,
+    Hy2,
+    ShadowSocks,
+    Ss,
+    Tuic,
+    Warp
 }

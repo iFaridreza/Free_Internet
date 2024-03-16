@@ -1,8 +1,8 @@
 ﻿namespace Free_Internet.Models;
 
-internal class Vmess : BaseConfig<Vmess>
+internal class Vmess : BaseConfig
 {
-    internal override sealed IEnumerable<Vmess> GetConfigRegex(string data)
+    internal override IEnumerable<T> GetConfigRege<T>(string data)
     {
         try
         {
@@ -16,7 +16,8 @@ internal class Vmess : BaseConfig<Vmess>
                 {
                     links.Add(new Vmess
                     {
-                        Link = matchs.Value
+                        Link = matchs.Value,
+                        ConfigType = ConfigType.Vmess
                     });
                 }
             }
@@ -24,7 +25,7 @@ internal class Vmess : BaseConfig<Vmess>
             {
                 links = links.Distinct().ToList();
             }
-            return links;
+            return (IEnumerable<T>)links;
         }
         catch
         {

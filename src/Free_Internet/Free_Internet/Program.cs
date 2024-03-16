@@ -1,7 +1,10 @@
 ﻿try
 {
-    string token = args[0];
+    /*string token = args[0];
     string usernameChanell = args[1];
+    */
+    string token = "7061148933:AAFstKrHIHWmaod-I8ml19dSmyByhOoc0dM";
+    string usernameChanell = "Free_Internet_404";
 
     if (String.IsNullOrEmpty(token) || String.IsNullOrEmpty(usernameChanell))
     {
@@ -41,124 +44,34 @@
         {
             string pathRepoDir = configManager.UnzipRepository(repositoryName);
             string dataFile = configManager.GetDataFile(pathRepoDir, fileName);
-            IEnumerable<Vless> vlessesLink = configManager.GetLinkConfig(dataFile, new Vless());
-            IEnumerable<Vmess> vmessLink = configManager.GetLinkConfig(dataFile, new Vmess());
-            IEnumerable<Warp> warpLink = configManager.GetLinkConfig(dataFile, new Warp());
-            IEnumerable<Tuic> tuicLink = configManager.GetLinkConfig(dataFile, new Tuic());
-            IEnumerable<Trojan> trojanLink = configManager.GetLinkConfig(dataFile, new Trojan());
-            IEnumerable<Ss> ssLink = configManager.GetLinkConfig(dataFile, new Ss());
-            IEnumerable<ShadowSocks> shadowLink = configManager.GetLinkConfig(dataFile, new ShadowSocks());
+
+            List<Vless> vlessesLink = configManager.GetLinkConfig(dataFile, new Vless()).ToList();
+            List<Vmess> vmessLink = configManager.GetLinkConfig(dataFile, new Vmess()).ToList();
+            List<Warp> warpLink = configManager.GetLinkConfig(dataFile, new Warp()).ToList();
+            List<Tuic> tuicLink = configManager.GetLinkConfig(dataFile, new Tuic()).ToList();
+            List<Trojan> trojanLink = configManager.GetLinkConfig(dataFile, new Trojan()).ToList();
+            List<Ss> ssLink = configManager.GetLinkConfig(dataFile, new Ss()).ToList();
+            List<ShadowSocks> shadowLink = configManager.GetLinkConfig(dataFile, new ShadowSocks()).ToList();
+
+            List<BaseConfig> baseConfigs = new();
+            baseConfigs.AddRange(vlessesLink);
+            baseConfigs.AddRange(vmessLink);
+            baseConfigs.AddRange(warpLink);
+            baseConfigs.AddRange(tuicLink);
+            baseConfigs.AddRange(trojanLink);
+            baseConfigs.AddRange(ssLink);
+            baseConfigs.AddRange(shadowLink);
+
+            baseConfigs = baseConfigs.OrderBy(x => Guid.NewGuid()).ToList();
 
             StringBuilder message = new();
 
-            foreach (var vle in ssLink)
+            foreach (var vle in baseConfigs)
             {
                 message.Append("❤️ New Config");
                 message.Append(Environment.NewLine);
                 message.Append(Environment.NewLine);
-                message.Append($"✨ Type <b>[ {nameof(Ss)} ]</b>");
-                message.Append(Environment.NewLine);
-                message.Append(Environment.NewLine);
-                message.Append($"<code>{vle.Link}</code>");
-                message.Append(Environment.NewLine);
-                message.Append(Environment.NewLine);
-                message.Append($"#Free_Internet ");
-                await telegramBot.SendMessage(usernameChanell, message.ToString());
-                message.Clear();
-                await Task.Delay(delayOfMilisecound);
-            }
-
-            foreach (var vle in trojanLink)
-            {
-                message.Append("❤️ New Config");
-                message.Append(Environment.NewLine);
-                message.Append(Environment.NewLine);
-                message.Append($"✨ Type <b>[ {nameof(Trojan)} ]</b>");
-                message.Append(Environment.NewLine);
-                message.Append(Environment.NewLine);
-                message.Append($"<code>{vle.Link}</code>");
-                message.Append(Environment.NewLine);
-                message.Append(Environment.NewLine);
-                message.Append($"#Free_Internet ");
-                await telegramBot.SendMessage(usernameChanell, message.ToString());
-                message.Clear();
-                await Task.Delay(delayOfMilisecound);
-            }
-
-            foreach (var vle in vmessLink)
-            {
-                message.Append("❤️ New Config");
-                message.Append(Environment.NewLine);
-                message.Append(Environment.NewLine);
-                message.Append($"✨ Type <b>[ {nameof(Vmess)} ]</b>");
-                message.Append(Environment.NewLine);
-                message.Append(Environment.NewLine);
-                message.Append($"<code>{vle.Link}</code>");
-                message.Append(Environment.NewLine);
-                message.Append(Environment.NewLine);
-                message.Append($"#Free_Internet ");
-                await telegramBot.SendMessage(usernameChanell, message.ToString());
-                message.Clear();
-                await Task.Delay(delayOfMilisecound);
-            }
-
-            foreach (var vle in vlessesLink)
-            {
-                message.Append("❤️ New Config");
-                message.Append(Environment.NewLine);
-                message.Append(Environment.NewLine);
-                message.Append($"✨ Type <b>[ {nameof(Vless)} ]</b>");
-                message.Append(Environment.NewLine);
-                message.Append(Environment.NewLine);
-                message.Append($"<code>{vle.Link}</code>");
-                message.Append(Environment.NewLine);
-                message.Append(Environment.NewLine);
-                message.Append($"#Free_Internet ");
-                await telegramBot.SendMessage(usernameChanell, message.ToString());
-                message.Clear();
-                await Task.Delay(delayOfMilisecound);
-            }
-
-            foreach (var vle in warpLink)
-            {
-                message.Append("❤️ New Config");
-                message.Append(Environment.NewLine);
-                message.Append(Environment.NewLine);
-                message.Append($"✨ Type <b>[ {nameof(Warp)} ]</b>");
-                message.Append(Environment.NewLine);
-                message.Append(Environment.NewLine);
-                message.Append($"<code>{vle.Link}</code>");
-                message.Append(Environment.NewLine);
-                message.Append(Environment.NewLine);
-                message.Append($"#Free_Internet ");
-                await telegramBot.SendMessage(usernameChanell, message.ToString());
-                message.Clear();
-                await Task.Delay(delayOfMilisecound);
-            }
-
-            foreach (var vle in tuicLink)
-            {
-                message.Append("❤️ New Config");
-                message.Append(Environment.NewLine);
-                message.Append(Environment.NewLine);
-                message.Append($"✨ Type <b>[ {nameof(Tuic)} ]</b>");
-                message.Append(Environment.NewLine);
-                message.Append(Environment.NewLine);
-                message.Append($"<code>{vle.Link}</code>");
-                message.Append(Environment.NewLine);
-                message.Append(Environment.NewLine);
-                message.Append($"#Free_Internet ");
-                await telegramBot.SendMessage(usernameChanell, message.ToString());
-                message.Clear();
-                await Task.Delay(delayOfMilisecound);
-            }
-
-            foreach (var vle in shadowLink)
-            {
-                message.Append("❤️ New Config");
-                message.Append(Environment.NewLine);
-                message.Append(Environment.NewLine);
-                message.Append($"✨ Type <b>[ {nameof(ShadowSocks)} ]</b>");
+                message.Append($"✨ Type <b>[ {vle.ConfigType} ]</b>");
                 message.Append(Environment.NewLine);
                 message.Append(Environment.NewLine);
                 message.Append($"<code>{vle.Link}</code>");
