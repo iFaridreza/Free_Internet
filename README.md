@@ -15,6 +15,8 @@ Free internet for all or no one |  اینترنت آزاد برای همه یا 
 
 </p>
 
+# Dont Forget Star ⭐
+
 ## به یاد یوسف قبادی و سگارو❤️
 
 ### دوست داشتید PR بدید خوشحال میشم :)
