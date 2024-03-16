@@ -1,10 +1,8 @@
 ﻿try
 {
-    /*string token = args[0];
+    string token = args[0];
     string usernameChanell = args[1];
-    */
-    string token = "7061148933:AAFstKrHIHWmaod-I8ml19dSmyByhOoc0dM";
-    string usernameChanell = "Free_Internet_404";
+
 
     if (String.IsNullOrEmpty(token) || String.IsNullOrEmpty(usernameChanell))
     {
