@@ -5,3 +5,5 @@ global using Free_Internet.Models;
 global using Free_Internet.Services;
 global using System.Timers;
 global using System.Text;
+global using WTelegram;
+global using Starksoft.Net.Proxy;

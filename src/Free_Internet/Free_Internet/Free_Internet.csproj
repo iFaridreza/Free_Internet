@@ -8,7 +8,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="StarkSoftProxy" Version="1.6.0" />
     <PackageReference Include="Telegram.Bot" Version="19.0.0" />
+    <PackageReference Include="WTelegramClient" Version="3.7.1" />
   </ItemGroup>
 
 </Project>
