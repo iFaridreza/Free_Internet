@@ -180,7 +180,7 @@
                                     message.Append($"✨ Type <b>[ #Proxy ]</b>");
                                     message.Append(Environment.NewLine);
                                     message.Append(Environment.NewLine);
-                                    message.Append($"<code>{resultProxy}</code>");
+                                    message.Append($"{resultProxy}");
                                     message.Append(Environment.NewLine);
                                     message.Append(Environment.NewLine);
                                     message.Append($"#Free_Internet ");
@@ -209,7 +209,7 @@
                                 message.Append($"✨ Type <b>[ #Proxy ]</b>");
                                 message.Append(Environment.NewLine);
                                 message.Append(Environment.NewLine);
-                                message.Append($"<code>{resultProxy}</code>");
+                                message.Append($"{resultProxy}");
                                 message.Append(Environment.NewLine);
                                 message.Append(Environment.NewLine);
                                 message.Append($"#Free_Internet ");
@@ -230,7 +230,7 @@
                     message.Append($"✨ Type <b>[ #Proxy ]</b>");
                     message.Append(Environment.NewLine);
                     message.Append(Environment.NewLine);
-                    message.Append($"<code>{resultProxy}</code>");
+                    message.Append($"{resultProxy}");
                     message.Append(Environment.NewLine);
                     message.Append(Environment.NewLine);
                     message.Append($"#Free_Internet ");
