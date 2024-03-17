@@ -35,7 +35,7 @@
 
     if (args.Length > 2)
     {
-        string phoneNumber = args[2];
+        string phoneNumber = args[2].Replace(" ","");
         if (isLogin is false)
         {
             string? stateLogin = await telegramBotCli.TryLoginAsync(phoneNumber);

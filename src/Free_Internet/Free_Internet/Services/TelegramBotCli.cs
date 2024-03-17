@@ -65,7 +65,7 @@ internal class TelegramBotCli
         }
         catch
         {
-            throw;
+           return await Task.FromResult(false);
         }
     }
 
