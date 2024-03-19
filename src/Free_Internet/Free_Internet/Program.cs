@@ -27,6 +27,7 @@
 
     int threeDelayOfMilisecound = 180000;
     int oneDelayOfMilisecound = 60000;
+
     TelegramBotCli telegramBotCli = new(apiId: apiId, apiHash: apiHash);
     ConfigManager configManager = new(repositoryUrl, repositoryName);
     TelegramBot telegramBot = new(token, text, url);
@@ -35,7 +36,7 @@
 
     if (args.Length > 2)
     {
-        string phoneNumber = args[2].Replace(" ","");
+        string phoneNumber = args[2].Replace(" ", "");
         if (isLogin is false)
         {
             string? stateLogin = await telegramBotCli.TryLoginAsync(phoneNumber);
@@ -93,13 +94,19 @@
     Console.WriteLine($"Bot Username @{InfoBot.Username} Run");
 
     telegramBot.ScheduleTaskEvent += UpdateConfig;
+
     telegramBot.InvokeEvent();
 
     async Task UpdateConfig()
     {
-        bool IsDownload = await configManager.DownloadRepositoryAsync();
-        if (IsDownload)
+        while (true)
         {
+            bool IsDownload = await configManager.DownloadRepositoryAsync();
+            if (IsDownload is false)
+            {
+                break;
+            }
+
             string pathRepoDir = configManager.UnzipRepository(repositoryName);
             string dataFile = configManager.GetDataFile(pathRepoDir, fileName);
 
@@ -138,15 +145,15 @@
                 message.Append($"#Free_Internet ");
                 await telegramBot.SendMessage(usernameChanell, message.ToString());
                 message.Clear();
-                await Task.Delay(threeDelayOfMilisecound);
+                await Task.Delay(oneDelayOfMilisecound);
             }
-
-            telegramBot.InvokeEvent();
         }
     }
 
     async Task TelegramBotCli_OnChannelUpdate(TL.UpdatesBase arg)
     {
+        await Task.Delay(threeDelayOfMilisecound);
+
         var updateChannel = arg.Chats.First().Value;
         if (updateChannel is not null)
         {
@@ -238,7 +245,6 @@
                     message.Clear();
                 }
             }
-            await Task.Delay(oneDelayOfMilisecound);
         }
 
         string? IsProxy(string text)
