@@ -25,8 +25,8 @@
     string apiHash = "bbef22a24eda21653632cc4e1a129742";
     int apiId = 2836318;
 
-    int threeDelayOfMilisecound = 180000;
-    int oneDelayOfMilisecound = 60000;
+    int threeDelayOfMilisecound = (int)TimeSpan.FromMinutes(3).TotalMilliseconds;
+    int twoDelayOfMilisecound = (int)TimeSpan.FromMinutes(2).TotalMilliseconds;
 
     TelegramBotCli telegramBotCli = new(apiId: apiId, apiHash: apiHash);
     ConfigManager configManager = new(repositoryUrl, repositoryName);
@@ -145,7 +145,7 @@
                 message.Append($"#Free_Internet ");
                 await telegramBot.SendMessage(usernameChanell, message.ToString());
                 message.Clear();
-                await Task.Delay(oneDelayOfMilisecound);
+                await Task.Delay(twoDelayOfMilisecound);
             }
         }
     }
