@@ -1,13 +1,13 @@
 ﻿using File = System.IO.File;
 
 namespace Free_Internet.Services;
-internal sealed class ConfigManager
+internal sealed class ConfigRepositoryManager
 {
     private string _urlRepository;
     private string _repositoryPath;
     private string _repositoryName;
 
-    public ConfigManager(string urlRepository, string repositoryName)
+    public ConfigRepositoryManager(string urlRepository, string repositoryName)
     {
         _urlRepository = urlRepository;
         string curentDir = Environment.CurrentDirectory;

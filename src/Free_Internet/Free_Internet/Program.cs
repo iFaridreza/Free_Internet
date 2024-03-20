@@ -1,42 +1,16 @@
 ﻿try
 {
-    string token = args[0];
-    string usernameChanell = args[1];
+    TelegramBotCli telegramBotCli = new(apiId: ConfigProject.ApiId, apiHash: ConfigProject.ApiHash);
+    ConfigRepositoryManager configManager = new(ConfigProject.RepositoryUrl,ConfigProject.RepositoryName);
+    TelegramBotApi telegramBot = new(ConfigProject.Token, ConfigProject.TextInlineButton, ConfigProject.UrlInlineButton);
 
-    if (String.IsNullOrEmpty(token) || String.IsNullOrEmpty(usernameChanell))
-    {
-        Console.WriteLine("Token or Username is Null => Free_Internet.exe \"Token\" \"Username Chanell\"");
-        return;
-    }
-    if (usernameChanell.Contains("https://t.me/") || usernameChanell.Contains("t.me/"))
-    {
-        usernameChanell = usernameChanell.Replace("https://t.me/", "@").Replace("t.me/", "@");
-    }
-    if (!usernameChanell.Contains("@"))
-    {
-        usernameChanell = usernameChanell.Insert(0, "@");
-    }
-
-    string repositoryUrl = "https://github.com/barry-far/V2ray-Configs/archive/refs/heads/main.zip";
-    string repositoryName = "barry-far";
-    string fileName = "All_Configs_Sub.txt";
-    string text = "Internet is free for everyone 🌍";
-    string url = "https://t.me/iFaridreza";
-    string apiHash = "bbef22a24eda21653632cc4e1a129742";
-    int apiId = 2836318;
-
-    int threeDelayOfMilisecound = (int)TimeSpan.FromMinutes(3).TotalMilliseconds;
-    int twoDelayOfMilisecound = (int)TimeSpan.FromMinutes(2).TotalMilliseconds;
-
-    TelegramBotCli telegramBotCli = new(apiId: apiId, apiHash: apiHash);
-    ConfigManager configManager = new(repositoryUrl, repositoryName);
-    TelegramBot telegramBot = new(token, text, url);
-
+    int GetTotalMilliseconds(int minutes) => (int)TimeSpan.FromMinutes(minutes).TotalMilliseconds;
+    
     var isLogin = telegramBotCli.LoginUserIfNeed().Result;
 
-    if (args.Length > 2)
+    if (ConfigProject.PhoneNumber is not null)
     {
-        string phoneNumber = args[2].Replace(" ", "");
+        string phoneNumber = ConfigProject.PhoneNumber.Replace(" ", "");
         if (isLogin is false)
         {
             string? stateLogin = await telegramBotCli.TryLoginAsync(phoneNumber);
@@ -71,18 +45,19 @@
             if (stateLogin == "login_sucsess")
             {
                 isLogin = telegramBotCli.LoginUserIfNeed().Result;
-                if (isLogin is true)
+                if (isLogin)
                 {
                     Console.WriteLine($"Login Sucsess");
                     telegramBotCli.OnChannelUpdate += TelegramBotCli_OnChannelUpdate;
                     Console.WriteLine("Ready Recive Update");
                     telegramBotCli.GetUpdate();
+                    isLogin = false;
                 }
             }
         }
     }
 
-    if (isLogin is true)
+    if (isLogin)
     {
         telegramBotCli.OnChannelUpdate += TelegramBotCli_OnChannelUpdate;
         Console.WriteLine("Ready Recive Update");
@@ -104,11 +79,11 @@
             bool IsDownload = await configManager.DownloadRepositoryAsync();
             if (IsDownload is false)
             {
-                break;
+                continue;
             }
 
-            string pathRepoDir = configManager.UnzipRepository(repositoryName);
-            string dataFile = configManager.GetDataFile(pathRepoDir, fileName);
+            string pathRepoDir = configManager.UnzipRepository(ConfigProject.RepositoryName);
+            string dataFile = configManager.GetDataFile(pathRepoDir, ConfigProject.FileName);
 
             List<Vless> vlessesLink = configManager.GetLinkConfig(dataFile, new Vless()).ToList();
             List<Vmess> vmessLink = configManager.GetLinkConfig(dataFile, new Vmess()).ToList();
@@ -143,18 +118,18 @@
                 message.Append(Environment.NewLine);
                 message.Append(Environment.NewLine);
                 message.Append($"#Free_Internet ");
-                await telegramBot.SendMessage(usernameChanell, message.ToString());
+                await telegramBot.SendMessage(ConfigProject.UsernameChanellConfig, message.ToString());
                 message.Clear();
-                await Task.Delay(twoDelayOfMilisecound);
+                await Task.Delay(GetTotalMilliseconds(2));
             }
         }
     }
 
     async Task TelegramBotCli_OnChannelUpdate(TL.UpdatesBase arg)
     {
-        await Task.Delay(threeDelayOfMilisecound);
+        await Task.Delay(GetTotalMilliseconds(3));
 
-        var updateChannel = arg.Chats.First().Value;
+        var updateChannel = arg.Chats[0];
         if (updateChannel is not null)
         {
             StringBuilder message = new();
@@ -191,7 +166,7 @@
                                     message.Append(Environment.NewLine);
                                     message.Append(Environment.NewLine);
                                     message.Append($"#Free_Internet ");
-                                    await telegramBot.SendMessage(usernameChanell, message.ToString());
+                                    await telegramBot.SendMessage(ConfigProject.UsernameChanellConfig, message.ToString());
                                     message.Clear();
                                 }
                             }
@@ -220,7 +195,7 @@
                                 message.Append(Environment.NewLine);
                                 message.Append(Environment.NewLine);
                                 message.Append($"#Free_Internet ");
-                                await telegramBot.SendMessage(usernameChanell, message.ToString());
+                                await telegramBot.SendMessage(ConfigProject.UsernameChanellConfig, message.ToString());
                                 message.Clear();
                             }
                         }
@@ -241,7 +216,7 @@
                     message.Append(Environment.NewLine);
                     message.Append(Environment.NewLine);
                     message.Append($"#Free_Internet ");
-                    await telegramBot.SendMessage(usernameChanell, message.ToString());
+                    await telegramBot.SendMessage(ConfigProject.UsernameChanellConfig, message.ToString());
                     message.Clear();
                 }
             }
