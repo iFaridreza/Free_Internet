@@ -1,39 +1,45 @@
-﻿try
+﻿//todo: use serilog
+//todo: add configuration file
+//todo: add command line parser
+
+try
 {
     string token = args[0];
-    string usernameChanell = args[1];
-
-    if (String.IsNullOrEmpty(token) || String.IsNullOrEmpty(usernameChanell))
+    string channelUsername = args[1];
+    
+    if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(channelUsername))
     {
         Console.WriteLine("Token or Username is Null => Free_Internet.exe \"Token\" \"Username Chanell\"");
         return;
     }
-    if (usernameChanell.Contains("https://t.me/") || usernameChanell.Contains("t.me/"))
+    if (channelUsername.Contains("https://t.me/") || channelUsername.Contains("t.me/"))
     {
-        usernameChanell = usernameChanell.Replace("https://t.me/", "@").Replace("t.me/", "@");
+        channelUsername = channelUsername.Replace("https://t.me/", "@").Replace("t.me/", "@");
     }
-    if (!usernameChanell.Contains("@"))
+    if (!channelUsername.Contains('@'))
     {
-        usernameChanell = usernameChanell.Insert(0, "@");
+        channelUsername = channelUsername.Insert(0, "@");
     }
 
-    string repositoryUrl = "https://github.com/barry-far/V2ray-Configs/archive/refs/heads/main.zip";
-    string repositoryName = "barry-far";
-    string fileName = "All_Configs_Sub.txt";
-    string text = "Internet is free for everyone 🌍";
-    string url = "https://t.me/iFaridreza";
-    string apiHash = "bbef22a24eda21653632cc4e1a129742";
-    int apiId = 2836318;
+    //todo: move them to resources or config
+    const string repositoryUrl = "https://github.com/barry-far/V2ray-Configs/archive/refs/heads/main.zip";
+    const string repositoryName = "barry-far";
+    const string fileName = "All_Configs_Sub.txt";
+    const string text = "Internet is free for everyone 🌍";
+    const string url = "https://t.me/iFaridreza";
+    const string apiHash = "bbef22a24eda21653632cc4e1a129742";
+    const int apiId = 2836318;
 
-    int threeDelayOfMilisecound = (int)TimeSpan.FromMinutes(3).TotalMilliseconds;
-    int twoDelayOfMilisecound = (int)TimeSpan.FromMinutes(2).TotalMilliseconds;
+    int MinutesToMilliseconds(int minutes) => (int)TimeSpan.FromMinutes(minutes).TotalMilliseconds;
 
     TelegramBotCli telegramBotCli = new(apiId: apiId, apiHash: apiHash);
     ConfigManager configManager = new(repositoryUrl, repositoryName);
     TelegramBot telegramBot = new(token, text, url);
 
+    //todo: see what is this
     var isLogin = telegramBotCli.LoginUserIfNeed().Result;
 
+    //todo: refactor this to use system.command line
     if (args.Length > 2)
     {
         string phoneNumber = args[2].Replace(" ", "");
@@ -48,7 +54,7 @@
                         {
                             Console.Write("Code: ");
                             string? code = Console.ReadLine();
-                            if (String.IsNullOrEmpty(code))
+                            if (string.IsNullOrEmpty(code))
                             {
                                 break;
                             }
@@ -68,30 +74,32 @@
                         break;
                 }
             }
+            // todo: potential bug typo for success
             if (stateLogin == "login_sucsess")
             {
                 isLogin = telegramBotCli.LoginUserIfNeed().Result;
-                if (isLogin is true)
+                if (isLogin)
                 {
-                    Console.WriteLine($"Login Sucsess");
-                    telegramBotCli.OnChannelUpdate += TelegramBotCli_OnChannelUpdate;
-                    Console.WriteLine("Ready Recive Update");
+                    Console.WriteLine($"Login Success");
+                    //todo: HeapView.ObjectAllocation.Possible
+                    telegramBotCli.OnChannelUpdate += TelegramBotCliOnChannelUpdate;
+                    Console.WriteLine("Ready Receive Update");
                     telegramBotCli.GetUpdate();
                 }
             }
         }
     }
 
-    if (isLogin is true)
+    if (isLogin)
     {
-        telegramBotCli.OnChannelUpdate += TelegramBotCli_OnChannelUpdate;
-        Console.WriteLine("Ready Recive Update");
+        telegramBotCli.OnChannelUpdate += TelegramBotCliOnChannelUpdate;
+        Console.WriteLine("Ready Receive Update");
         telegramBotCli.GetUpdate();
     }
 
 
-    User? InfoBot = await telegramBot.InfoBotAsync();
-    Console.WriteLine($"Bot Username @{InfoBot.Username} Run");
+    User? infoBot = await telegramBot.InfoBotAsync();
+    Console.WriteLine("Bot Username @{0} Run", infoBot.Username);
 
     telegramBot.ScheduleTaskEvent += UpdateConfig;
 
@@ -101,14 +109,14 @@
     {
         while (true)
         {
-            bool IsDownload = await configManager.DownloadRepositoryAsync();
-            if (IsDownload is false)
+            bool isDownload = await configManager.DownloadRepositoryAsync();
+            if (isDownload is false)
             {
                 break;
             }
 
             string pathRepoDir = configManager.UnzipRepository(repositoryName);
-            string dataFile = configManager.GetDataFile(pathRepoDir, fileName);
+            string dataFile = ConfigManager.GetDataFile(pathRepoDir, fileName);
 
             List<Vless> vlessesLink = configManager.GetLinkConfig(dataFile, new Vless()).ToList();
             List<Vmess> vmessLink = configManager.GetLinkConfig(dataFile, new Vmess()).ToList();
@@ -118,7 +126,7 @@
             List<Ss> ssLink = configManager.GetLinkConfig(dataFile, new Ss()).ToList();
             List<ShadowSocks> shadowLink = configManager.GetLinkConfig(dataFile, new ShadowSocks()).ToList();
 
-            List<BaseConfig> baseConfigs = new();
+            List<IConfig> baseConfigs = new();
             baseConfigs.AddRange(vlessesLink);
             baseConfigs.AddRange(vmessLink);
             baseConfigs.AddRange(warpLink);
@@ -131,6 +139,7 @@
 
             StringBuilder message = new();
 
+            //todo: maybe a more suitable name?
             foreach (var vle in baseConfigs)
             {
                 message.Append("❤️ New Config");
@@ -143,17 +152,21 @@
                 message.Append(Environment.NewLine);
                 message.Append(Environment.NewLine);
                 message.Append($"#Free_Internet ");
-                await telegramBot.SendMessage(usernameChanell, message.ToString());
+                await telegramBot.SendMessage(channelUsername, message.ToString());
                 message.Clear();
-                await Task.Delay(twoDelayOfMilisecound);
+                
+                //todo: its really easier to just use 2 * 60 * 1000 ? isn't it?
+                await Task.Delay(MinutesToMilliseconds(2));
             }
         }
     }
 
-    async Task TelegramBotCli_OnChannelUpdate(TL.UpdatesBase arg)
+    //todo: any better name than arg like update?
+    async Task TelegramBotCliOnChannelUpdate(TL.UpdatesBase arg)
     {
-        await Task.Delay(threeDelayOfMilisecound);
+        await Task.Delay(MinutesToMilliseconds(3));
 
+        //todo: any way to extract this?
         var updateChannel = arg.Chats.First().Value;
         if (updateChannel is not null)
         {
@@ -165,8 +178,9 @@
                 TL.MessageEntity[] messageEntity = (TL.MessageEntity[])messageUpdate.entities;
                 TL.ReplyInlineMarkup messageMarkup = (TL.ReplyInlineMarkup)messageUpdate.reply_markup;
 
-                string? resultProxy = null;
+                string? resultProxy;
 
+                //todo: move this to func
                 if (messageMarkup is not null)
                 {
                     foreach (var inline in messageMarkup.rows)
@@ -174,98 +188,105 @@
                         foreach (var button in inline.buttons)
                         {
                             TL.KeyboardButtonUrl keyboardButton = (TL.KeyboardButtonUrl)button;
-                            if (keyboardButton is not null)
-                            {
-                                string url = keyboardButton.url;
-                                resultProxy = IsProxy(url);
+                            
+                            if (keyboardButton is null) continue;
+                            string url = keyboardButton.url;
+                            resultProxy = IsProxy(url);
 
-                                if (!String.IsNullOrEmpty(resultProxy))
-                                {
-                                    message.Append("❤️ New Proxy");
-                                    message.Append(Environment.NewLine);
-                                    message.Append(Environment.NewLine);
-                                    message.Append($"✨ Type <b>[ #Proxy ]</b>");
-                                    message.Append(Environment.NewLine);
-                                    message.Append(Environment.NewLine);
-                                    message.Append($"{resultProxy}");
-                                    message.Append(Environment.NewLine);
-                                    message.Append(Environment.NewLine);
-                                    message.Append($"#Free_Internet ");
-                                    await telegramBot.SendMessage(usernameChanell, message.ToString());
-                                    message.Clear();
-                                }
-                            }
+                            if (string.IsNullOrEmpty(resultProxy)) continue;
+                            
+                            message.Append("❤️ New Proxy");
+                            message.Append(Environment.NewLine);
+                            message.Append(Environment.NewLine);
+                            message.Append($"✨ Type <b>[ #Proxy ]</b>");
+                            message.Append(Environment.NewLine);
+                            message.Append(Environment.NewLine);
+                            message.Append($"{resultProxy}");
+                            message.Append(Environment.NewLine);
+                            message.Append(Environment.NewLine);
+                            message.Append($"#Free_Internet ");
+                            await telegramBot.SendMessage(channelUsername, message.ToString());
+                            message.Clear();
                         }
                     }
                 }
 
+                //todo: why code duplication? why not use a function?
                 if (messageEntity is not null)
                 {
                     foreach (var entity in messageEntity)
                     {
-                        if (entity is TL.MessageEntityTextUrl entityUrl)
-                        {
-                            string url = entityUrl.url;
-                            resultProxy = IsProxy(url);
+                        if (entity is not TL.MessageEntityTextUrl entityUrl) continue;
+                        
+                        var url = entityUrl.url;
+                        resultProxy = IsProxy(url);
 
-                            if (!String.IsNullOrEmpty(resultProxy))
-                            {
-                                message.Append("❤️ New Proxy");
-                                message.Append(Environment.NewLine);
-                                message.Append(Environment.NewLine);
-                                message.Append($"✨ Type <b>[ #Proxy ]</b>");
-                                message.Append(Environment.NewLine);
-                                message.Append(Environment.NewLine);
-                                message.Append($"{resultProxy}");
-                                message.Append(Environment.NewLine);
-                                message.Append(Environment.NewLine);
-                                message.Append($"#Free_Internet ");
-                                await telegramBot.SendMessage(usernameChanell, message.ToString());
-                                message.Clear();
-                            }
-                        }
+                        if (string.IsNullOrEmpty(resultProxy)) continue;
+                        
+                        message.Append("❤️ New Proxy");
+                        message.Append(Environment.NewLine);
+                        message.Append(Environment.NewLine);
+                        message.Append($"✨ Type <b>[ #Proxy ]</b>");
+                        message.Append(Environment.NewLine);
+                        message.Append(Environment.NewLine);
+                        message.Append($"{resultProxy}");
+                        message.Append(Environment.NewLine);
+                        message.Append(Environment.NewLine);
+                        message.Append($"#Free_Internet ");
+                        await telegramBot.SendMessage(channelUsername, message.ToString());
+                        message.Clear();
                     }
                 }
                 string messageText = messageUpdate.message;
                 resultProxy = IsProxy(messageText);
 
-                if (!String.IsNullOrEmpty(resultProxy))
-                {
-                    message.Append("❤️ New Proxy");
-                    message.Append(Environment.NewLine);
-                    message.Append(Environment.NewLine);
-                    message.Append($"✨ Type <b>[ #Proxy ]</b>");
-                    message.Append(Environment.NewLine);
-                    message.Append(Environment.NewLine);
-                    message.Append($"{resultProxy}");
-                    message.Append(Environment.NewLine);
-                    message.Append(Environment.NewLine);
-                    message.Append($"#Free_Internet ");
-                    await telegramBot.SendMessage(usernameChanell, message.ToString());
-                    message.Clear();
-                }
+                //todo: oh god another one
+                if (string.IsNullOrEmpty(resultProxy)) continue;
+                
+                message.Append("❤️ New Proxy");
+                message.Append(Environment.NewLine);
+                message.Append(Environment.NewLine);
+                message.Append($"✨ Type <b>[ #Proxy ]</b>");
+                message.Append(Environment.NewLine);
+                message.Append(Environment.NewLine);
+                message.Append($"{resultProxy}");
+                message.Append(Environment.NewLine);
+                message.Append(Environment.NewLine);
+                message.Append($"#Free_Internet ");
+                await telegramBot.SendMessage(channelUsername, message.ToString());
+                message.Clear();
             }
         }
 
+        return;
+
         string? IsProxy(string text)
         {
-            const string pattern = @"https:\/\/t.me\/proxy\?(.*)";
-
-            var matchs = Regex.Match(text, pattern);
-            return matchs.Value ?? null;
+            var matches = ProxyRegex().Match(text);
+            return matches.Value;
         }
     }
 
+    //todo: maybe use service?
     Console.ReadKey();
+    //todo: and proper exiting
     await telegramBotCli.DisconnectClient();
 }
 catch (Exception ex)
 {
-    string pathErrorFile = "LogError.txt";
-    if (System.IO.File.Exists(pathErrorFile))
+    //todo: configure serilog
+    const string errorFilePath = "LogError.txt";
+    if (System.IO.File.Exists(errorFilePath))
     {
-        System.IO.File.Create(pathErrorFile).Close();
+        System.IO.File.Create(errorFilePath).Close();
     }
+    
     string errorMessage = $"{DateTime.Now}\n\n{ex.Message}\n\n{ex.StackTrace}\n======= ++ =======\n";
     System.IO.File.AppendText(errorMessage);
+}
+
+partial class Program
+{
+    [GeneratedRegex("https:\\/\\/t.me\\/proxy\\?(.*)")]
+    private static partial Regex ProxyRegex();
 }
