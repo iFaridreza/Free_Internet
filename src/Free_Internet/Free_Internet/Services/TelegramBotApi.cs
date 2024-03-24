@@ -23,26 +23,12 @@ internal class TelegramBotApi
 
     internal async Task<User> InfoBotAsync()
     {
-        try
-        {
             return await _botClient.GetMeAsync();
-        }
-        catch
-        {
-            throw;
-        }
     }
 
     internal async Task SendMessage(string usernameChanell, string message)
     {
-        try
-        {
-            await _botClient.SendTextMessageAsync(usernameChanell, message, parseMode: ParseMode.Html, replyMarkup: DisplayButton(_text, _url));
-        }
-        catch
-        {
-            throw;
-        }
+        await _botClient.SendTextMessageAsync(usernameChanell, message, parseMode: ParseMode.Html, replyMarkup: DisplayButton(_text, _url));
     }
 
     private InlineKeyboardMarkup DisplayButton(string text, string url)

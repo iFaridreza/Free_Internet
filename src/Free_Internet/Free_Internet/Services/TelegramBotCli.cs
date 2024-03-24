@@ -6,7 +6,14 @@ namespace Free_Internet.Services;
 internal class TelegramBotCli
 {
     private readonly Client _clientCli;
+    private static string _usernameChannel;
     internal event Func<UpdatesBase, Task>? OnChannelUpdate;
+
+    static TelegramBotCli()
+    {
+        _usernameChannel = $"@{ConfigProject.UsernameChanellConfig}";
+    }
+
     internal TelegramBotCli(int apiId, string apiHash, string? sessionPath = null)
     {
         //disable wtelegram log
@@ -33,26 +40,12 @@ internal class TelegramBotCli
 
     internal async Task ConnectClient()
     {
-        try
-        {
-            await _clientCli.ConnectAsync();
-        }
-        catch
-        {
-            throw;
-        }
+        await _clientCli.ConnectAsync();
     }
 
     internal async Task DisconnectClient()
     {
-        try
-        {
-            await Task.Run(() => _clientCli.Dispose());
-        }
-        catch
-        {
-            throw;
-        }
+        await Task.Run(() => _clientCli.Dispose());
     }
 
     internal async Task<bool> LoginUserIfNeed(string? sessionPath = null)
@@ -60,49 +53,33 @@ internal class TelegramBotCli
         try
         {
             await ConnectClient();
-            var usernameInfo = await _clientCli.Contacts_ResolveUsername("iFaridreza");
+            var usernameInfo = await _clientCli.Contacts_ResolveUsername(_usernameChannel);
             return usernameInfo is null ? await Task.FromResult(false) : await Task.FromResult(true);
         }
         catch
         {
-           return await Task.FromResult(false);
+            return await Task.FromResult(false);
         }
     }
 
     internal void HttpProxy(string host, int port)
     {
-        try
-        {
-            _clientCli.TcpHandler += (address, port) =>
+        _clientCli.TcpHandler += (address, port) =>
             {
                 HttpProxyClient proxyHttp = new();
                 proxyHttp.ProxyHost = host;
                 proxyHttp.ProxyPort = port;
                 return Task.FromResult(proxyHttp.CreateConnection(address, port));
             };
-        }
-        catch
-        {
-            throw;
-        }
     }
 
     internal async Task<string?> TryLoginAsync(string state)
     {
-        try
+        state = await _clientCli.Login(state);
+        if (_clientCli.User is not null)
         {
-            state = await _clientCli.Login(state);
-            if (_clientCli.User is not null)
-            {
-                state = "login_sucsess";
-            }
-            return await Task.FromResult(state);
+            state = "login_sucsess";
         }
-        catch
-        {
-            throw;
-        }
+        return await Task.FromResult(state);
     }
-
-
 }

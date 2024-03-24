@@ -4,32 +4,25 @@ internal class Tuic : BaseConfig
 {
     internal override IEnumerable<T> GetConfigRege<T>(string data)
     {
-        try
+        string[] dataArray = data.Split('\n');
+        const string pattern = @"^tuic:\/\/(.*)";
+        List<Tuic> links = new();
+        foreach (string link in dataArray)
         {
-            string[] dataArray = data.Split('\n');
-            const string pattern = @"^tuic:\/\/(.*)";
-            List<Tuic> links = new();
-            foreach (string link in dataArray)
+            var matchs = Regex.Match(link, pattern);
+            if (matchs.Success is true)
             {
-                var matchs = Regex.Match(link, pattern);
-                if (matchs.Success is true)
+                links.Add(new Tuic
                 {
-                    links.Add(new Tuic
-                    {
-                        Link = matchs.Value,
-                        ConfigType = ConfigType.Tuic
-                    });
-                }
+                    Link = matchs.Value,
+                    ConfigType = ConfigType.Tuic
+                });
             }
-            if (links.Count > 0)
-            {
-                links = links.Distinct().ToList();
-            }
-            return (IEnumerable<T>)links;
         }
-        catch
+        if (links.Count > 0)
         {
-            throw;
+            links = links.Distinct().ToList();
         }
+        return (IEnumerable<T>)links;
     }
 }

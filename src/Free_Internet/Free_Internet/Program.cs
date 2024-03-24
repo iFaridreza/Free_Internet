@@ -10,7 +10,7 @@
 
     if (ConfigProject.PhoneNumber is not null)
     {
-        string phoneNumber = ConfigProject.PhoneNumber.Replace(" ", "");
+        string phoneNumber = ConfigProject.PhoneNumber;
         if (isLogin is false)
         {
             string? stateLogin = await telegramBotCli.TryLoginAsync(phoneNumber);
@@ -47,9 +47,7 @@
                 isLogin = telegramBotCli.LoginUserIfNeed().Result;
                 if (isLogin)
                 {
-                    Console.WriteLine($"Login Sucsess");
                     telegramBotCli.OnChannelUpdate += TelegramBotCli_OnChannelUpdate;
-                    Console.WriteLine("Ready Recive Update");
                     telegramBotCli.GetUpdate();
                     isLogin = false;
                 }
@@ -60,13 +58,11 @@
     if (isLogin)
     {
         telegramBotCli.OnChannelUpdate += TelegramBotCli_OnChannelUpdate;
-        Console.WriteLine("Ready Recive Update");
         telegramBotCli.GetUpdate();
     }
 
 
     User? InfoBot = await telegramBot.InfoBotAsync();
-    Console.WriteLine($"Bot Username @{InfoBot.Username} Run");
 
     telegramBot.ScheduleTaskEvent += UpdateConfig;
 
@@ -241,6 +237,6 @@ catch (Exception ex)
     {
         System.IO.File.Create(pathErrorFile).Close();
     }
-    string errorMessage = $"{DateTime.Now}\n\n{ex.Message}\n\n{ex.StackTrace}\n======= ++ =======\n";
+    string errorMessage = $"{DateTime.Now}\n\n{ex.Message}\n======= ++ =======\n";
     System.IO.File.AppendText(errorMessage);
 }

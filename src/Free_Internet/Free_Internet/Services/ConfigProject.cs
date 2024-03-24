@@ -14,9 +14,7 @@ internal static class ConfigProject
     internal static string FileName { get; set; } = null!;
     internal static string TextInlineButton { get; set; } = null!;
     internal static string UrlInlineButton { get; set; } = null!;
-
-    internal static string? PhoneNumber { get; set; }
-    internal static string? UsernameChanellLog { get; set; }
+    internal static string PhoneNumber { get; set; } = null!;
 
     private static string _path;
 
@@ -30,8 +28,7 @@ internal static class ConfigProject
             var objectsModel = new
             {
                 Token,
-                UsernameChanellConfig,
-                UsernameChanellLog,
+                UsernameChanellConfig = "@",
                 ApiId,
                 ApiHash,
                 RepositoryName,
@@ -55,13 +52,13 @@ internal static class ConfigProject
 
         Token = objectData["Token"];
         UsernameChanellConfig = objectData["UsernameChanellConfig"];
-        UsernameChanellLog = objectData["UsernameChanellLog"];
         ApiId = int.TryParse(objectData["ApiId"], out int apiId) ? apiId : default;
         ApiHash = objectData["ApiHash"];
         RepositoryName = objectData["RepositoryName"];
         RepositoryUrl = objectData["RepositoryUrl"];
         TextInlineButton = objectData["TextInlineButton"];
         UrlInlineButton = objectData["UrlInlineButton"];
-        PhoneNumber = objectData["PhoneNumber"];
+        FileName = objectData["FileName"];
+        PhoneNumber = objectData["PhoneNumber"].Replace(" ","");
     }
 }
