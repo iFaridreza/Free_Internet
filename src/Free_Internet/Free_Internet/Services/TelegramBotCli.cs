@@ -6,13 +6,7 @@ namespace Free_Internet.Services;
 internal class TelegramBotCli
 {
     private readonly Client _clientCli;
-    private static string _usernameChannel;
     internal event Func<UpdatesBase, Task>? OnChannelUpdate;
-
-    static TelegramBotCli()
-    {
-        _usernameChannel = $"@{ConfigProject.UsernameChanellConfig}";
-    }
 
     internal TelegramBotCli(int apiId, string apiHash, string? sessionPath = null)
     {
@@ -53,7 +47,7 @@ internal class TelegramBotCli
         try
         {
             await ConnectClient();
-            var usernameInfo = await _clientCli.Contacts_ResolveUsername(_usernameChannel);
+            var usernameInfo = await _clientCli.Contacts_ResolveUsername(ConfigProject.UsernameChanellConfig.Replace("@",""));
             return usernameInfo is null ? await Task.FromResult(false) : await Task.FromResult(true);
         }
         catch
