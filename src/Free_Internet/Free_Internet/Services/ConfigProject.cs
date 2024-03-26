@@ -4,17 +4,17 @@ using File = System.IO.File;
 namespace Free_Internet.Services;
 internal class ConfigProject
 {
-    internal string Token { get; set; } = null!;
-    internal string UsernameChanellConfig { get; set; } = null!;
-    internal string ChatIdChanellLog { get; set; } = null!;
-    internal int ApiId { get; set; }
-    internal string ApiHash { get; set; } = null!;
-    internal string RepositoryName { get; set; } = null!;
-    internal string RepositoryUrl { get; set; } = null!;
-    internal string FileName { get; set; } = null!;
-    internal string TextInlineButton { get; set; } = null!;
-    internal string UrlInlineButton { get; set; } = null!;
-    internal string PhoneNumber { get; set; } = null!;
+    public string Token { get; set; } = null!;
+    public string UsernameChanellConfig { get; set; } = null!;
+    public string ChatIdChanellLog { get; set; } = null!;
+    public int ApiId { get; set; }
+    public string ApiHash { get; set; } = null!;
+    public string RepositoryName { get; set; } = null!;
+    public string RepositoryUrl { get; set; } = null!;
+    public string FileName { get; set; } = null!;
+    public string TextInlineButton { get; set; } = null!;
+    public string UrlInlineButton { get; set; } = null!;
+    public string PhoneNumber { get; set; } = null!;
 
     internal ConfigProject LoadConfig()
     {
