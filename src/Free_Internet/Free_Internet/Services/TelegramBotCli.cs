@@ -1,5 +1,4 @@
 ﻿using TL;
-using UserTl = TL.User;
 
 namespace Free_Internet.Services;
 
@@ -7,11 +6,12 @@ internal class TelegramBotCli
 {
     private readonly Client _clientCli;
     internal event Func<UpdatesBase, Task>? OnChannelUpdate;
-
-    internal TelegramBotCli(int apiId, string apiHash, string? sessionPath = null)
+    internal readonly string _usernameChannel;
+    internal TelegramBotCli(int apiId, string apiHash, string usernameChannel, string? sessionPath = null)
     {
         //disable wtelegram log
         Helpers.Log = (lvl, log) => { };
+        _usernameChannel = usernameChannel.Replace("@","");
         _clientCli = new(apiID: apiId, apiHash: apiHash, sessionPathname: sessionPath);
     }
 
@@ -47,7 +47,7 @@ internal class TelegramBotCli
         try
         {
             await ConnectClient();
-            var usernameInfo = await _clientCli.Contacts_ResolveUsername(ConfigProject.UsernameChanellConfig.Replace("@",""));
+            var usernameInfo = await _clientCli.Contacts_ResolveUsername(_usernameChannel);
             return usernameInfo is null ? await Task.FromResult(false) : await Task.FromResult(true);
         }
         catch

@@ -1,18 +1,22 @@
-﻿try
-{
-    TelegramBotCli telegramBotCli = new(apiId: ConfigProject.ApiId, apiHash: ConfigProject.ApiHash);
-    ConfigRepositoryManager configManager = new(ConfigProject.RepositoryUrl,ConfigProject.RepositoryName);
-    TelegramBotApi telegramBot = new(ConfigProject.Token, ConfigProject.TextInlineButton, ConfigProject.UrlInlineButton);
+﻿ConfigProject configProject = new ConfigProject().LoadConfig();
+var logger = new LoggerConfiguration()
+    .WriteTo.Telegram(configProject.Token, configProject.ChatIdChanellLog)
+    .CreateLogger();
+TelegramBotCli telegramBotCli = new(apiId: configProject.ApiId, apiHash: configProject.ApiHash, configProject.UsernameChanellConfig);
+TelegramBotApi telegramBot = new(configProject.Token, configProject.TextInlineButton, configProject.UrlInlineButton);
+ConfigRepositoryManager configManager = new(configProject.RepositoryUrl, configProject.RepositoryName);
 
-    int GetTotalMilliseconds(int minutes) => (int)TimeSpan.FromMinutes(minutes).TotalMilliseconds;
-    
+try
+{
     var isLogin = telegramBotCli.LoginUserIfNeed().Result;
 
-    if (ConfigProject.PhoneNumber is not null)
+    if (configProject.PhoneNumber is not null)
     {
-        string phoneNumber = ConfigProject.PhoneNumber;
+        string phoneNumber = configProject.PhoneNumber;
         if (isLogin is false)
         {
+            logger.Warning("Client Not Init");
+
             string? stateLogin = await telegramBotCli.TryLoginAsync(phoneNumber);
             while (stateLogin != "login_sucsess")
             {
@@ -45,12 +49,7 @@
             if (stateLogin == "login_sucsess")
             {
                 isLogin = telegramBotCli.LoginUserIfNeed().Result;
-                if (isLogin)
-                {
-                    telegramBotCli.OnChannelUpdate += TelegramBotCli_OnChannelUpdate;
-                    telegramBotCli.GetUpdate();
-                    isLogin = false;
-                }
+                logger.Information("Login Account Suscsessfully");
             }
         }
     }
@@ -58,11 +57,12 @@
     if (isLogin)
     {
         telegramBotCli.OnChannelUpdate += TelegramBotCli_OnChannelUpdate;
+        logger.Information("Client Get Update Sucsessfully");
         telegramBotCli.GetUpdate();
     }
 
-
     User? InfoBot = await telegramBot.InfoBotAsync();
+    logger.Information($"Bot {InfoBot.Username} Online");
 
     telegramBot.ScheduleTaskEvent += UpdateConfig;
 
@@ -72,14 +72,20 @@
     {
         while (true)
         {
+            logger.Information("Download Repository");
             bool IsDownload = await configManager.DownloadRepositoryAsync();
             if (IsDownload is false)
             {
+                logger.Warning($"Download Repository {IsDownload} Try..");
                 continue;
             }
+            logger.Information("Download Repository Sucsessfully");
 
-            string pathRepoDir = configManager.UnzipRepository(ConfigProject.RepositoryName);
-            string dataFile = configManager.GetDataFile(pathRepoDir, ConfigProject.FileName);
+            string pathRepoDir = configManager.UnzipRepository(configProject.RepositoryName);
+            logger.Information("Unzip Repository Sucsessfully");
+            
+            string dataFile = configManager.GetDataFile(pathRepoDir, configProject.FileName);
+            logger.Information("Get Data File Sucsessfully");
 
             List<Vless> vlessesLink = configManager.GetLinkConfig(dataFile, new Vless()).ToList();
             List<Vmess> vmessLink = configManager.GetLinkConfig(dataFile, new Vmess()).ToList();
@@ -114,7 +120,7 @@
                 message.Append(Environment.NewLine);
                 message.Append(Environment.NewLine);
                 message.Append($"#Free_Internet ");
-                await telegramBot.SendMessage(ConfigProject.UsernameChanellConfig, message.ToString());
+                await telegramBot.SendMessage(configProject.UsernameChanellConfig, message.ToString());
                 message.Clear();
                 await Task.Delay(GetTotalMilliseconds(2));
             }
@@ -126,6 +132,7 @@
         await Task.Delay(GetTotalMilliseconds(3));
 
         var updateChannel = arg.Chats[0];
+        
         if (updateChannel is not null)
         {
             StringBuilder message = new();
@@ -162,7 +169,7 @@
                                     message.Append(Environment.NewLine);
                                     message.Append(Environment.NewLine);
                                     message.Append($"#Free_Internet ");
-                                    await telegramBot.SendMessage(ConfigProject.UsernameChanellConfig, message.ToString());
+                                    await telegramBot.SendMessage(configProject.UsernameChanellConfig, message.ToString());
                                     message.Clear();
                                 }
                             }
@@ -191,7 +198,7 @@
                                 message.Append(Environment.NewLine);
                                 message.Append(Environment.NewLine);
                                 message.Append($"#Free_Internet ");
-                                await telegramBot.SendMessage(ConfigProject.UsernameChanellConfig, message.ToString());
+                                await telegramBot.SendMessage(configProject.UsernameChanellConfig, message.ToString());
                                 message.Clear();
                             }
                         }
@@ -212,7 +219,7 @@
                     message.Append(Environment.NewLine);
                     message.Append(Environment.NewLine);
                     message.Append($"#Free_Internet ");
-                    await telegramBot.SendMessage(ConfigProject.UsernameChanellConfig, message.ToString());
+                    await telegramBot.SendMessage(configProject.UsernameChanellConfig, message.ToString());
                     message.Clear();
                 }
             }
@@ -232,11 +239,6 @@
 }
 catch (Exception ex)
 {
-    string pathErrorFile = "LogError.txt";
-    if (System.IO.File.Exists(pathErrorFile))
-    {
-        System.IO.File.Create(pathErrorFile).Close();
-    }
-    string errorMessage = $"{DateTime.Now}\n\n{ex.Message}\n======= ++ =======\n";
-    System.IO.File.AppendText(errorMessage);
+    logger.Error(ex.Message);
 }
+int GetTotalMilliseconds(int minutes) => (int)TimeSpan.FromMinutes(minutes).TotalMilliseconds;

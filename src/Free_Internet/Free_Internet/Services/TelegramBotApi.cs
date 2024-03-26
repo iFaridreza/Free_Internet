@@ -6,7 +6,6 @@ internal class TelegramBotApi
 {
     private TelegramBotClient _botClient;
     private string _text, _url;
-
     internal event Func<Task>? ScheduleTaskEvent;
 
     internal TelegramBotApi(string token, string text, string url)
@@ -23,7 +22,7 @@ internal class TelegramBotApi
 
     internal async Task<User> InfoBotAsync()
     {
-            return await _botClient.GetMeAsync();
+        return await _botClient.GetMeAsync();
     }
 
     internal async Task SendMessage(string usernameChanell, string message)
