@@ -16,15 +16,10 @@ internal class ConfigProject
     internal string UrlInlineButton { get; set; } = null!;
     internal string PhoneNumber { get; set; } = null!;
 
-    private readonly string _path;
-
-    internal ConfigProject()
-    {
-        _path = Path.Combine(Environment.CurrentDirectory, "Config.json");
-    }
-
     internal ConfigProject LoadConfig()
     {
+        string _path = Path.Combine(Environment.CurrentDirectory, "Config.json");
+        
         if (!File.Exists(_path))
         {
             JsonSerializerOptions optionJson = new() { WriteIndented = true };
