@@ -57,8 +57,8 @@ try
     if (isLogin)
     {
         telegramBotCli.OnChannelUpdate += TelegramBotCli_OnChannelUpdate;
-        logger.Information("Client Get Update Sucsessfully");
         telegramBotCli.GetUpdate();
+        logger.Information("Client Get Update Sucsessfully");
     }
 
     User? InfoBot = await telegramBot.InfoBotAsync();
@@ -129,9 +129,7 @@ try
 
     async Task TelegramBotCli_OnChannelUpdate(TL.UpdatesBase arg)
     {
-        await Task.Delay(GetTotalMilliseconds(3));
-
-        var updateChannel = arg.Chats[0];
+        var updateChannel = arg.Chats.First().Value;
         
         if (updateChannel is not null)
         {
