@@ -6,17 +6,16 @@ TelegramBotCli telegramBotCli = new(apiId: configProject.ApiId, apiHash: configP
 TelegramBotApi telegramBot = new(configProject.Token, configProject.TextInlineButton, configProject.UrlInlineButton);
 ConfigRepositoryManager configManager = new(configProject.RepositoryUrl, configProject.RepositoryName);
 
-try
+var isLogin = telegramBotCli.LoginUserIfNeed().Result;
+
+if (configProject.PhoneNumber is not null)
 {
-    var isLogin = telegramBotCli.LoginUserIfNeed().Result;
-
-    if (configProject.PhoneNumber is not null)
+    string phoneNumber = configProject.PhoneNumber;
+    if (isLogin is false)
     {
-        string phoneNumber = configProject.PhoneNumber;
-        if (isLogin is false)
+        logger.Warning("Client Not Init");
+        try
         {
-            logger.Warning("Client Not Init");
-
             string? stateLogin = await telegramBotCli.TryLoginAsync(phoneNumber);
             while (stateLogin != "login_sucsess")
             {
@@ -52,25 +51,32 @@ try
                 logger.Information("Login Account Suscsessfully");
             }
         }
+        catch (Exception ex)
+        {
+            logger.Error(ex.Message);
+        }
     }
+}
 
-    if (isLogin)
+if (isLogin)
+{
+    telegramBotCli.OnChannelUpdate += TelegramBotCli_OnChannelUpdate;
+    telegramBotCli.GetUpdateChannel();
+    logger.Information("Client Get Update Sucsessfully");
+}
+
+User? InfoBot = await telegramBot.InfoBotAsync();
+logger.Information($"Bot {InfoBot.Username} Online");
+
+telegramBot.ScheduleTaskEvent += UpdateConfig;
+
+await telegramBot.InvokeEvent();
+
+async Task UpdateConfig()
+{
+    while (true)
     {
-        telegramBotCli.OnChannelUpdate += TelegramBotCli_OnChannelUpdate;
-        telegramBotCli.GetUpdate();
-        logger.Information("Client Get Update Sucsessfully");
-    }
-
-    User? InfoBot = await telegramBot.InfoBotAsync();
-    logger.Information($"Bot {InfoBot.Username} Online");
-
-    telegramBot.ScheduleTaskEvent += UpdateConfig;
-
-    telegramBot.InvokeEvent();
-
-    async Task UpdateConfig()
-    {
-        while (true)
+        try
         {
             logger.Information("Download Repository");
             bool IsDownload = await configManager.DownloadRepositoryAsync();
@@ -83,7 +89,7 @@ try
 
             string pathRepoDir = configManager.UnzipRepository(configProject.RepositoryName);
             logger.Information("Unzip Repository Sucsessfully");
-            
+
             string dataFile = configManager.GetDataFile(pathRepoDir, configProject.FileName);
             logger.Information("Get Data File Sucsessfully");
 
@@ -125,12 +131,20 @@ try
                 await Task.Delay(GetTotalMilliseconds(2));
             }
         }
+        catch (Exception ex)
+        {
+            logger.Error(ex.Message);
+        }
     }
+}
 
-    async Task TelegramBotCli_OnChannelUpdate(TL.UpdatesBase arg)
+async Task TelegramBotCli_OnChannelUpdate(TL.UpdatesBase arg)
+{
+    try
     {
+
         var updateChannel = arg.Chats.First().Value;
-        
+
         if (updateChannel is not null)
         {
             StringBuilder message = new();
@@ -222,21 +236,22 @@ try
                 }
             }
         }
-
-        string? IsProxy(string text)
-        {
-            const string pattern = @"https:\/\/t.me\/proxy\?(.*)";
-
-            var matchs = Regex.Match(text, pattern);
-            return matchs.Value ?? null;
-        }
+    }
+    catch (Exception ex)
+    {
+        logger.Error(ex.Message);
     }
 
-    Console.ReadKey();
-    await telegramBotCli.DisconnectClient();
+    string? IsProxy(string text)
+    {
+        const string pattern = @"https:\/\/t.me\/proxy\?(.*)";
+
+        var matchs = Regex.Match(text, pattern);
+        return matchs.Value ?? null;
+    }
 }
-catch (Exception ex)
-{
-    logger.Error(ex.Message);
-}
+
+Console.ReadKey();
+await telegramBotCli.DisconnectClient();
+
 int GetTotalMilliseconds(int minutes) => (int)TimeSpan.FromMinutes(minutes).TotalMilliseconds;

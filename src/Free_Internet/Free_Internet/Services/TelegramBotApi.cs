@@ -15,9 +15,9 @@ internal class TelegramBotApi
         _url = url;
     }
 
-    internal void InvokeEvent()
+    internal async Task InvokeEvent()
     {
-        ScheduleTaskEvent?.Invoke();
+        await Task.Run(() => { ScheduleTaskEvent?.Invoke(); });
     }
 
     internal async Task<User> InfoBotAsync()

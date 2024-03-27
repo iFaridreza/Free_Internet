@@ -11,23 +11,26 @@ internal class TelegramBotCli
     {
         //disable wtelegram log
         Helpers.Log = (lvl, log) => { };
-        _usernameChannel = usernameChannel.Replace("@","");
+        _usernameChannel = usernameChannel.Replace("@", "");
         _clientCli = new(apiID: apiId, apiHash: apiHash, sessionPathname: sessionPath);
     }
 
-    private void UpdateChennelInvoke(UpdatesBase updatesBase)
+    private async Task UpdateChennelInvoke(UpdatesBase updatesBase)
     {
-        OnChannelUpdate?.Invoke(updatesBase);
+        await Task.Run(() =>
+        {
+            OnChannelUpdate?.Invoke(updatesBase);
+        });
     }
 
-    internal void GetUpdate()
+    internal void GetUpdateChannel()
     {
         _clientCli.OnUpdate += async (UpdatesBase update) =>
         {
             var updateInfo = update.Chats.First().Value;
             if (updateInfo.IsChannel is true)
             {
-                await Task.Run(() => UpdateChennelInvoke(update));
+                await UpdateChennelInvoke(update);
             }
         };
     }
