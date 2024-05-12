@@ -1,5 +1,4 @@
 ﻿using TL;
-using UserTl = TL.User;
 
 namespace Free_Internet.Services;
 
@@ -11,49 +10,26 @@ internal class TelegramBotCli
     {
         //disable wtelegram log
         Helpers.Log = (lvl, log) => { };
-        _clientCli = new(apiID: apiId, apiHash: apiHash, sessionPathname: sessionPath);
+        _clientCli = new Client(apiID: apiId, apiHash: apiHash, sessionPathname: sessionPath);
     }
 
-    private void UpdateChennelInvoke(UpdatesBase updatesBase)
-    {
-        OnChannelUpdate?.Invoke(updatesBase);
-    }
+    private void UpdateChannelInvoke(UpdatesBase updatesBase) => OnChannelUpdate?.Invoke(updatesBase);
 
     internal void GetUpdate()
     {
         _clientCli.OnUpdate += async (UpdatesBase update) =>
         {
             var updateInfo = update.Chats.First().Value;
-            if (updateInfo.IsChannel is true)
+            if (updateInfo.IsChannel)
             {
-                await Task.Run(() => UpdateChennelInvoke(update));
+                await Task.Run(() => UpdateChannelInvoke(update));
             }
         };
     }
 
-    internal async Task ConnectClient()
-    {
-        try
-        {
-            await _clientCli.ConnectAsync();
-        }
-        catch
-        {
-            throw;
-        }
-    }
+    internal async Task ConnectClient() => await _clientCli.ConnectAsync();
 
-    internal async Task DisconnectClient()
-    {
-        try
-        {
-            await Task.Run(() => _clientCli.Dispose());
-        }
-        catch
-        {
-            throw;
-        }
-    }
+    internal async Task DisconnectClient() => await Task.Run(() => _clientCli.Dispose());
 
     internal async Task<bool> LoginUserIfNeed(string? sessionPath = null)
     {
@@ -69,40 +45,26 @@ internal class TelegramBotCli
         }
     }
 
+    //todo: this is unused
     internal void HttpProxy(string host, int port)
     {
-        try
+        _clientCli.TcpHandler += (address, port) =>
         {
-            _clientCli.TcpHandler += (address, port) =>
-            {
-                HttpProxyClient proxyHttp = new();
-                proxyHttp.ProxyHost = host;
-                proxyHttp.ProxyPort = port;
-                return Task.FromResult(proxyHttp.CreateConnection(address, port));
-            };
-        }
-        catch
-        {
-            throw;
-        }
+            HttpProxyClient proxyHttp = new();
+            proxyHttp.ProxyHost = host;
+            proxyHttp.ProxyPort = port;
+            return Task.FromResult(proxyHttp.CreateConnection(address, port));
+        };
     }
 
     internal async Task<string?> TryLoginAsync(string state)
     {
-        try
+        state = await _clientCli.Login(state);
+        if (_clientCli.User is not null)
         {
-            state = await _clientCli.Login(state);
-            if (_clientCli.User is not null)
-            {
-                state = "login_sucsess";
-            }
-            return await Task.FromResult(state);
+            state = "login_sucsess";
         }
-        catch
-        {
-            throw;
-        }
+        
+        return await Task.FromResult(state);
     }
-
-
 }

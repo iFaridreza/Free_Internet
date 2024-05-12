@@ -1,35 +1,11 @@
 ﻿namespace Free_Internet.Models;
 
-internal class ShadowSocks : BaseConfig
+internal partial class ShadowSocks : BaseConfig<ShadowSocks>
 {
-    internal override IEnumerable<T> GetConfigRege<T>(string data)
-    {
-        try
-        {
-            string[] dataArray = data.Split('\n');
-            const string pattern = @"^shadowsocks:\/\/(.*)";
-            List<ShadowSocks> links = new();
-            foreach (string link in dataArray)
-            {
-                var matchs = Regex.Match(link, pattern);
-                if (matchs.Success is true)
-                {
-                    links.Add(new ShadowSocks
-                    {
-                        Link = matchs.Value,
-                        ConfigType = ConfigType.ShadowSocks
-                    });
-                }
-            }
-            if (links.Count > 0)
-            {
-                links = links.Distinct().ToList();
-            }
-            return (IEnumerable<T>)links;
-        }
-        catch
-        {
-            throw;
-        }
-    }
+    public override IEnumerable<T> GetConfigRegex<T>(string data) =>
+        base.GetConfigRegex<T>(data, ShadowSocksRegex(), ConfigType.ShadowSocks);
+
+
+    [GeneratedRegex(@"^shadowsocks:\/\/(.*)")]
+    private static partial Regex ShadowSocksRegex();
 }
