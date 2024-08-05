@@ -2,6 +2,7 @@
 //todo: add configuration file
 //todo: add command line parser
 
+StringBuilder message = new();
 try
 {
     string token = args[0];
@@ -131,8 +132,7 @@ try
             
             baseConfigs = baseConfigs.OrderBy(x => Guid.NewGuid()).ToList();
 
-            StringBuilder message = new();
-
+            message.Clear();
             //todo: maybe a more suitable name?
             foreach (var vle in baseConfigs)
             {
@@ -171,52 +171,32 @@ try
                 TL.Message messageUpdate = (TL.Message)updateChanell.message;
                 TL.MessageEntity[] messageEntity = (TL.MessageEntity[])messageUpdate.entities;
                 TL.ReplyInlineMarkup messageMarkup = (TL.ReplyInlineMarkup)messageUpdate.reply_markup;
+        if (updateChannel is null) return;
+        message.Clear();            
+        foreach (var item in arg.UpdateList)
+        {
+            TL.UpdateNewChannelMessage updateChanell = (TL.UpdateNewChannelMessage)item;
+            TL.Message messageUpdate = (TL.Message)updateChanell.message;
+            TL.MessageEntity[] messageEntity = (TL.MessageEntity[])messageUpdate.entities;
+            TL.ReplyInlineMarkup messageMarkup = (TL.ReplyInlineMarkup)messageUpdate.reply_markup;
 
-                string? resultProxy;
+            string? resultProxy;
 
-                //todo: move this to func
-                if (messageMarkup is not null)
+            //todo: move this to func
+            if (messageMarkup is not null)
+            {
+                foreach (var inline in messageMarkup.rows)
                 {
-                    foreach (var inline in messageMarkup.rows)
+                    foreach (var button in inline.buttons)
                     {
-                        foreach (var button in inline.buttons)
-                        {
-                            TL.KeyboardButtonUrl keyboardButton = (TL.KeyboardButtonUrl)button;
+                        TL.KeyboardButtonUrl keyboardButton = (TL.KeyboardButtonUrl)button;
                             
-                            if (keyboardButton is null) continue;
-                            string url = keyboardButton.url;
-                            resultProxy = IsProxy(url);
-
-                            if (string.IsNullOrEmpty(resultProxy)) continue;
-                            
-                            message.Append("❤️ New Proxy");
-                            message.AppendLine();
-                            message.AppendLine();
-                            message.Append($"✨ Type <b>[ #Proxy ]</b>");
-                            message.AppendLine();
-                            message.AppendLine();
-                            message.Append($"{resultProxy}");
-                            message.AppendLine();
-                            message.AppendLine();
-                            message.Append($"#Free_Internet ");
-                            await telegramBot.SendMessage(channelUsername, message.ToString());
-                            message.Clear();
-                        }
-                    }
-                }
-
-                //todo: why code duplication? why not use a function?
-                if (messageEntity is not null)
-                {
-                    foreach (var entity in messageEntity)
-                    {
-                        if (entity is not TL.MessageEntityTextUrl entityUrl) continue;
-                        
-                        var url = entityUrl.url;
+                        if (keyboardButton is null) continue;
+                        string url = keyboardButton.url;
                         resultProxy = IsProxy(url);
 
                         if (string.IsNullOrEmpty(resultProxy)) continue;
-                        
+                            
                         message.Append("❤️ New Proxy");
                         message.AppendLine();
                         message.AppendLine();
@@ -231,25 +211,52 @@ try
                         message.Clear();
                     }
                 }
-                string messageText = messageUpdate.message;
-                resultProxy = IsProxy(messageText);
-
-                //todo: oh god another one
-                if (string.IsNullOrEmpty(resultProxy)) continue;
-                
-                message.Append("❤️ New Proxy");
-                message.AppendLine();
-                message.AppendLine();
-                message.Append($"✨ Type <b>[ #Proxy ]</b>");
-                message.AppendLine();
-                message.AppendLine();
-                message.Append($"{resultProxy}");
-                message.AppendLine();
-                message.AppendLine();
-                message.Append($"#Free_Internet ");
-                await telegramBot.SendMessage(channelUsername, message.ToString());
-                message.Clear();
             }
+
+            //todo: why code duplication? why not use a function?
+            if (messageEntity is not null)
+            {
+                foreach (var entity in messageEntity)
+                {
+                    if (entity is not TL.MessageEntityTextUrl entityUrl) continue;
+                        
+                    var url = entityUrl.url;
+                    resultProxy = IsProxy(url);
+
+                    if (string.IsNullOrEmpty(resultProxy)) continue;
+                        
+                    message.Append("❤️ New Proxy");
+                    message.AppendLine();
+                    message.AppendLine();
+                    message.Append($"✨ Type <b>[ #Proxy ]</b>");
+                    message.AppendLine();
+                    message.AppendLine();
+                    message.Append($"{resultProxy}");
+                    message.AppendLine();
+                    message.AppendLine();
+                    message.Append($"#Free_Internet ");
+                    await telegramBot.SendMessage(channelUsername, message.ToString());
+                    message.Clear();
+                }
+            }
+            string messageText = messageUpdate.message;
+            resultProxy = IsProxy(messageText);
+
+            //todo: oh god another one
+            if (string.IsNullOrEmpty(resultProxy)) continue;
+                
+            message.Append("❤️ New Proxy");
+            message.AppendLine();
+            message.AppendLine();
+            message.Append($"✨ Type <b>[ #Proxy ]</b>");
+            message.AppendLine();
+            message.AppendLine();
+            message.Append($"{resultProxy}");
+            message.AppendLine();
+            message.AppendLine();
+            message.Append($"#Free_Internet ");
+            await telegramBot.SendMessage(channelUsername, message.ToString());
+            message.Clear();
         }
 
         return;
