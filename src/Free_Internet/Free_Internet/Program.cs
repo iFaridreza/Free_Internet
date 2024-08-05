@@ -105,6 +105,7 @@ try
 
     telegramBot.InvokeEvent();
 
+    //todo: add retry option
     async Task UpdateConfig()
     {
         while (true)
@@ -117,24 +118,17 @@ try
 
             string pathRepoDir = configManager.UnzipRepository(repositoryName);
             string dataFile = ConfigManager.GetDataFile(pathRepoDir, fileName);
-
-            List<Vless> vlessesLink = configManager.GetLinkConfig(dataFile, new Vless()).ToList();
-            List<Vmess> vmessLink = configManager.GetLinkConfig(dataFile, new Vmess()).ToList();
-            List<Warp> warpLink = configManager.GetLinkConfig(dataFile, new Warp()).ToList();
-            List<Tuic> tuicLink = configManager.GetLinkConfig(dataFile, new Tuic()).ToList();
-            List<Trojan> trojanLink = configManager.GetLinkConfig(dataFile, new Trojan()).ToList();
-            List<Ss> ssLink = configManager.GetLinkConfig(dataFile, new Ss()).ToList();
-            List<ShadowSocks> shadowLink = configManager.GetLinkConfig(dataFile, new ShadowSocks()).ToList();
-
+            
             List<IConfig> baseConfigs = new();
-            baseConfigs.AddRange(vlessesLink);
-            baseConfigs.AddRange(vmessLink);
-            baseConfigs.AddRange(warpLink);
-            baseConfigs.AddRange(tuicLink);
-            baseConfigs.AddRange(trojanLink);
-            baseConfigs.AddRange(ssLink);
-            baseConfigs.AddRange(shadowLink);
 
+            baseConfigs.AddRange(configManager.GetLinkConfig(dataFile, new Vless()));
+            baseConfigs.AddRange(configManager.GetLinkConfig(dataFile, new Vmess()));
+            baseConfigs.AddRange(configManager.GetLinkConfig(dataFile, new Warp()));
+            baseConfigs.AddRange(configManager.GetLinkConfig(dataFile, new Tuic()));
+            baseConfigs.AddRange(configManager.GetLinkConfig(dataFile, new Trojan()));
+            baseConfigs.AddRange(configManager.GetLinkConfig(dataFile, new Ss()));
+            baseConfigs.AddRange(configManager.GetLinkConfig(dataFile, new ShadowSocks()));
+            
             baseConfigs = baseConfigs.OrderBy(x => Guid.NewGuid()).ToList();
 
             StringBuilder message = new();
@@ -143,14 +137,14 @@ try
             foreach (var vle in baseConfigs)
             {
                 message.Append("❤️ New Config");
-                message.Append(Environment.NewLine);
-                message.Append(Environment.NewLine);
+                message.AppendLine();
+                message.AppendLine();
                 message.Append($"✨ Type <b>[ #{vle.ConfigType} ]</b>");
-                message.Append(Environment.NewLine);
-                message.Append(Environment.NewLine);
+                message.AppendLine();
+                message.AppendLine();
                 message.Append($"<code>{vle.Link}</code>");
-                message.Append(Environment.NewLine);
-                message.Append(Environment.NewLine);
+                message.AppendLine();
+                message.AppendLine();
                 message.Append($"#Free_Internet ");
                 await telegramBot.SendMessage(channelUsername, message.ToString());
                 message.Clear();
@@ -196,14 +190,14 @@ try
                             if (string.IsNullOrEmpty(resultProxy)) continue;
                             
                             message.Append("❤️ New Proxy");
-                            message.Append(Environment.NewLine);
-                            message.Append(Environment.NewLine);
+                            message.AppendLine();
+                            message.AppendLine();
                             message.Append($"✨ Type <b>[ #Proxy ]</b>");
-                            message.Append(Environment.NewLine);
-                            message.Append(Environment.NewLine);
+                            message.AppendLine();
+                            message.AppendLine();
                             message.Append($"{resultProxy}");
-                            message.Append(Environment.NewLine);
-                            message.Append(Environment.NewLine);
+                            message.AppendLine();
+                            message.AppendLine();
                             message.Append($"#Free_Internet ");
                             await telegramBot.SendMessage(channelUsername, message.ToString());
                             message.Clear();
@@ -224,14 +218,14 @@ try
                         if (string.IsNullOrEmpty(resultProxy)) continue;
                         
                         message.Append("❤️ New Proxy");
-                        message.Append(Environment.NewLine);
-                        message.Append(Environment.NewLine);
+                        message.AppendLine();
+                        message.AppendLine();
                         message.Append($"✨ Type <b>[ #Proxy ]</b>");
-                        message.Append(Environment.NewLine);
-                        message.Append(Environment.NewLine);
+                        message.AppendLine();
+                        message.AppendLine();
                         message.Append($"{resultProxy}");
-                        message.Append(Environment.NewLine);
-                        message.Append(Environment.NewLine);
+                        message.AppendLine();
+                        message.AppendLine();
                         message.Append($"#Free_Internet ");
                         await telegramBot.SendMessage(channelUsername, message.ToString());
                         message.Clear();
@@ -244,14 +238,14 @@ try
                 if (string.IsNullOrEmpty(resultProxy)) continue;
                 
                 message.Append("❤️ New Proxy");
-                message.Append(Environment.NewLine);
-                message.Append(Environment.NewLine);
+                message.AppendLine();
+                message.AppendLine();
                 message.Append($"✨ Type <b>[ #Proxy ]</b>");
-                message.Append(Environment.NewLine);
-                message.Append(Environment.NewLine);
+                message.AppendLine();
+                message.AppendLine();
                 message.Append($"{resultProxy}");
-                message.Append(Environment.NewLine);
-                message.Append(Environment.NewLine);
+                message.AppendLine();
+                message.AppendLine();
                 message.Append($"#Free_Internet ");
                 await telegramBot.SendMessage(channelUsername, message.ToString());
                 message.Clear();
@@ -285,8 +279,8 @@ catch (Exception ex)
     System.IO.File.AppendText(errorMessage);
 }
 
-partial class Program
+internal partial class Program
 {
-    [GeneratedRegex("https:\\/\\/t.me\\/proxy\\?(.*)")]
+    [GeneratedRegex(@"https:\/\/t.me\/proxy\?(.*)")]
     private static partial Regex ProxyRegex();
 }
