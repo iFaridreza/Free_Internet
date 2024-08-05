@@ -2,17 +2,21 @@
 //todo: add configuration file
 //todo: add command line parser
 
+LoggerManager logger = new();
 StringBuilder message = new();
+
+if (args.Length < 2)
+{
+    logger.LogError("Token or Username is Null => Free_Internet.exe \"{token}\" \"{channelUsername}\"",
+        "Token", "Channel Username");
+    return;
+}
+
 try
 {
     string token = args[0];
     string channelUsername = args[1];
     
-    if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(channelUsername))
-    {
-        Console.WriteLine("Token or Username is Null => Free_Internet.exe \"Token\" \"Username Chanell\"");
-        return;
-    }
     if (channelUsername.Contains("https://t.me/") || channelUsername.Contains("t.me/"))
     {
         channelUsername = channelUsername.Replace("https://t.me/", "@").Replace("t.me/", "@");
@@ -66,7 +70,7 @@ try
                         {
                             Console.Write("Password: ");
                             string? password = Console.ReadLine();
-                            if (String.IsNullOrEmpty(password))
+                            if (string.IsNullOrEmpty(password))
                             {
                                 break;
                             }
@@ -81,10 +85,10 @@ try
                 isLogin = telegramBotCli.LoginUserIfNeed().Result;
                 if (isLogin)
                 {
-                    Console.WriteLine($"Login Success");
+                    logger.LogInfo("Login Success");
                     //todo: HeapView.ObjectAllocation.Possible
                     telegramBotCli.OnChannelUpdate += TelegramBotCliOnChannelUpdate;
-                    Console.WriteLine("Ready Receive Update");
+                    logger.LogInfo("Ready to Receive Update");
                     telegramBotCli.GetUpdate();
                 }
             }
@@ -94,13 +98,13 @@ try
     if (isLogin)
     {
         telegramBotCli.OnChannelUpdate += TelegramBotCliOnChannelUpdate;
-        Console.WriteLine("Ready Receive Update");
+        logger.LogInfo("Ready to Receive Update");
         telegramBotCli.GetUpdate();
     }
 
 
     User? infoBot = await telegramBot.InfoBotAsync();
-    Console.WriteLine("Bot Username @{0} Run", infoBot.Username);
+    logger.LogInfo("Bot Username {username} Run", infoBot.Username!);
 
     telegramBot.ScheduleTaskEvent += UpdateConfig;
 
@@ -162,15 +166,6 @@ try
 
         //todo: any way to extract this?
         var updateChannel = arg.Chats.First().Value;
-        if (updateChannel is not null)
-        {
-            StringBuilder message = new();
-            foreach (var item in arg.UpdateList)
-            {
-                TL.UpdateNewChannelMessage updateChanell = (TL.UpdateNewChannelMessage)item;
-                TL.Message messageUpdate = (TL.Message)updateChanell.message;
-                TL.MessageEntity[] messageEntity = (TL.MessageEntity[])messageUpdate.entities;
-                TL.ReplyInlineMarkup messageMarkup = (TL.ReplyInlineMarkup)messageUpdate.reply_markup;
         if (updateChannel is null) return;
         message.Clear();            
         foreach (var item in arg.UpdateList)
@@ -275,15 +270,7 @@ try
 }
 catch (Exception ex)
 {
-    //todo: configure serilog
-    const string errorFilePath = "LogError.txt";
-    if (System.IO.File.Exists(errorFilePath))
-    {
-        System.IO.File.Create(errorFilePath).Close();
-    }
-    
-    string errorMessage = $"{DateTime.Now}\n\n{ex.Message}\n\n{ex.StackTrace}\n======= ++ =======\n";
-    System.IO.File.AppendText(errorMessage);
+    logger.LogFatal(ex, ex.Message);
 }
 
 internal partial class Program
