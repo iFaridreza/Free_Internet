@@ -143,14 +143,17 @@ try
             foreach (var vle in baseConfigs)
             {
                 message.Append("❤️ New Config");
-                message.Append(Environment.NewLine);
-                message.Append(Environment.NewLine);
+                message.AppendLine();
+                message.AppendLine();
                 message.Append($"✨ Type <b>[ #{vle.ConfigType} ]</b>");
                 message.Append(Environment.NewLine);
                 message.Append(Environment.NewLine);
+                message.AppendLine();
+                message.AppendLine();
                 message.Append($"<code>{vle.Link}</code>");
                 message.Append(Environment.NewLine);
                 message.Append(Environment.NewLine);
+                message.AppendLine();
                 message.Append($"#Free_Internet ");
                 await telegramBot.SendMessage(channelUsername, message.ToString());
                 message.Clear();
@@ -196,14 +199,14 @@ try
                             if (string.IsNullOrEmpty(resultProxy)) continue;
                             
                             message.Append("❤️ New Proxy");
-                            message.Append(Environment.NewLine);
-                            message.Append(Environment.NewLine);
+                            message.AppendLine();
+                            message.AppendLine();
                             message.Append($"✨ Type <b>[ #Proxy ]</b>");
-                            message.Append(Environment.NewLine);
-                            message.Append(Environment.NewLine);
+                            message.AppendLine();
+                            message.AppendLine();
                             message.Append($"{resultProxy}");
-                            message.Append(Environment.NewLine);
-                            message.Append(Environment.NewLine);
+                            message.AppendLine();
+                            message.AppendLine();
                             message.Append($"#Free_Internet ");
                             await telegramBot.SendMessage(channelUsername, message.ToString());
                             message.Clear();
@@ -226,12 +229,17 @@ try
                         message.Append("❤️ New Proxy");
                         message.Append(Environment.NewLine);
                         message.Append(Environment.NewLine);
+                        message.AppendLine();
+                        message.AppendLine();
                         message.Append($"✨ Type <b>[ #Proxy ]</b>");
                         message.Append(Environment.NewLine);
                         message.Append(Environment.NewLine);
+                        message.AppendLine();
+                        message.AppendLine();
                         message.Append($"{resultProxy}");
                         message.Append(Environment.NewLine);
                         message.Append(Environment.NewLine);
+                        message.AppendLine();
                         message.Append($"#Free_Internet ");
                         await telegramBot.SendMessage(channelUsername, message.ToString());
                         message.Clear();
@@ -246,12 +254,16 @@ try
                 message.Append("❤️ New Proxy");
                 message.Append(Environment.NewLine);
                 message.Append(Environment.NewLine);
+                message.AppendLine();
                 message.Append($"✨ Type <b>[ #Proxy ]</b>");
                 message.Append(Environment.NewLine);
                 message.Append(Environment.NewLine);
+                message.AppendLine();
+                message.AppendLine();
                 message.Append($"{resultProxy}");
                 message.Append(Environment.NewLine);
                 message.Append(Environment.NewLine);
+                message.AppendLine();
                 message.Append($"#Free_Internet ");
                 await telegramBot.SendMessage(channelUsername, message.ToString());
                 message.Clear();
