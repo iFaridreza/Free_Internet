@@ -11,14 +11,16 @@ public class LoggerManager
                 .WriteTo.File("logs/log-.txt",
                     rollingInterval: RollingInterval.Day,
                     retainedFileCountLimit: 7,
-                    restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Error,
+                    restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Fatal,
                     outputTemplate:
                     "[{Timestamp:yyyy-MM-dd HH:mm:ss}] [{Level}] [{SourceContext}] [{Message}{NewLine}" +
                     "{Exception}{NewLine}-----------------------------------------------------]{NewLine}")
                 .CreateLogger();
+        
+        _logger = Log.Logger;
     }
     
-    private readonly ILogger _logger = Log.Logger;
+    private readonly ILogger _logger;
 
     public void LogDebug(string message) => _logger.Debug(message);
 
