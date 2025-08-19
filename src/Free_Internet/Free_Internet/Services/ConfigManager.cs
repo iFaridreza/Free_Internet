@@ -3,6 +3,7 @@
 namespace Free_Internet.Services;
 internal sealed class ConfigManager
 {
+    private readonly ConfigParser _parser;
     private readonly string _urlRepository;
     private readonly string _repositoryPath;
     private readonly string _repositoryName;
@@ -22,6 +23,9 @@ internal sealed class ConfigManager
             Directory.CreateDirectory(_repositoryPath);
         }
         _repositoryName = repositoryName;
+        
+        //todo: maybe DI
+        _parser = new ConfigParser();
     }
 
     internal async Task<bool> DownloadRepositoryAsync()
@@ -79,6 +83,5 @@ internal sealed class ConfigManager
         return dataFile;
     }
 
-    internal IEnumerable<T> GetLinkConfig<T>(string dataFile, T tConfig) where T : BaseConfig<T>, new() =>
-        tConfig.GetConfigRegex<T>(dataFile).Reverse();
+    internal IEnumerable<Config> GetConfigLinks(string dataFile) => _parser.Parse(dataFile);
 }

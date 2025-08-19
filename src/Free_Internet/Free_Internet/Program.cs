@@ -123,33 +123,16 @@ try
 
             string pathRepoDir = configManager.UnzipRepository(repositoryName);
             string dataFile = ConfigManager.GetDataFile(pathRepoDir, fileName);
-            
-            List<IConfig> baseConfigs = new();
 
-            baseConfigs.AddRange(configManager.GetLinkConfig(dataFile, new Vless()));
-            baseConfigs.AddRange(configManager.GetLinkConfig(dataFile, new Vmess()));
-            baseConfigs.AddRange(configManager.GetLinkConfig(dataFile, new Warp()));
-            baseConfigs.AddRange(configManager.GetLinkConfig(dataFile, new Tuic()));
-            baseConfigs.AddRange(configManager.GetLinkConfig(dataFile, new Trojan()));
-            baseConfigs.AddRange(configManager.GetLinkConfig(dataFile, new Ss()));
-            baseConfigs.AddRange(configManager.GetLinkConfig(dataFile, new ShadowSocks()));
-            
-            baseConfigs = baseConfigs.OrderBy(x => Guid.NewGuid()).ToList();
 
+            IEnumerable<Config> baseConfigs = configManager.GetConfigLinks(dataFile)
+                .OrderBy(x => Guid.NewGuid());
+            
             message.Clear();
             //todo: maybe a more suitable name?
             foreach (var vle in baseConfigs)
             {
-                message.Append("❤️ New Config");
-                message.AppendLine();
-                message.AppendLine();
-                message.Append($"✨ Type <b>[ #{vle.ConfigType} ]</b>");
-                message.AppendLine();
-                message.AppendLine();
-                message.Append($"<code>{vle.Link}</code>");
-                message.AppendLine();
-                message.AppendLine();
-                message.Append($"#Free_Internet ");
+                FormatConfigs(vle.Link, vle.ConfigType.ToString());
                 await telegramBot.SendMessage(channelUsername, message.ToString());
                 message.Clear();
                 
@@ -192,16 +175,7 @@ try
 
                         if (string.IsNullOrEmpty(resultProxy)) continue;
                             
-                        message.Append("❤️ New Proxy");
-                        message.AppendLine();
-                        message.AppendLine();
-                        message.Append($"✨ Type <b>[ #Proxy ]</b>");
-                        message.AppendLine();
-                        message.AppendLine();
-                        message.Append($"{resultProxy}");
-                        message.AppendLine();
-                        message.AppendLine();
-                        message.Append($"#Free_Internet ");
+                        FormatProxy(resultProxy);
                         await telegramBot.SendMessage(channelUsername, message.ToString());
                         message.Clear();
                     }
@@ -220,16 +194,7 @@ try
 
                     if (string.IsNullOrEmpty(resultProxy)) continue;
                         
-                    message.Append("❤️ New Proxy");
-                    message.AppendLine();
-                    message.AppendLine();
-                    message.Append($"✨ Type <b>[ #Proxy ]</b>");
-                    message.AppendLine();
-                    message.AppendLine();
-                    message.Append($"{resultProxy}");
-                    message.AppendLine();
-                    message.AppendLine();
-                    message.Append($"#Free_Internet ");
+                    FormatProxy(resultProxy);
                     await telegramBot.SendMessage(channelUsername, message.ToString());
                     message.Clear();
                 }
@@ -240,16 +205,7 @@ try
             //todo: oh god another one
             if (string.IsNullOrEmpty(resultProxy)) continue;
                 
-            message.Append("❤️ New Proxy");
-            message.AppendLine();
-            message.AppendLine();
-            message.Append($"✨ Type <b>[ #Proxy ]</b>");
-            message.AppendLine();
-            message.AppendLine();
-            message.Append($"{resultProxy}");
-            message.AppendLine();
-            message.AppendLine();
-            message.Append($"#Free_Internet ");
+            FormatProxy(resultProxy);
             await telegramBot.SendMessage(channelUsername, message.ToString());
             message.Clear();
         }
@@ -271,6 +227,25 @@ try
 catch (Exception ex)
 {
     logger.LogFatal(ex, ex.Message);
+}
+
+return;
+
+void FormatProxy(string content) => FormatResponds("Proxy", content);
+void FormatConfigs(string content, string type) => FormatResponds("Config", $"<code>{content}</code>", type);
+
+void FormatResponds(string name, string content, string type = "Proxy")
+{
+    message.Append($"❤️ New {name}");
+    message.AppendLine();
+    message.AppendLine();
+    message.Append($"✨ Type <b>[ #{type} ]</b>");
+    message.AppendLine();
+    message.AppendLine();
+    message.Append($"{content}");
+    message.AppendLine();
+    message.AppendLine();
+    message.Append("#Free_Internet ");
 }
 
 internal partial class Program
